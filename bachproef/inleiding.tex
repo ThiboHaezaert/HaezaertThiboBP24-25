@@ -5,32 +5,43 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+In moderne bedrijfsomgevingen worden netwerken steeds complexer en diverser. Organisaties bevatten vaak heterogene netwerken, dat wilt zeggen dat binnen het netwerken verschillende soorten apparaten aanwezig zijn die niet allemaal dezelfde besturingssystemen en software gebruiken. 
+Vaak zijn deze netwerken ook opgedeeld in verschillende segmenten om de impact van een eventuele aanval te beperken.
+Hoewel segmentatie helpt om bedreigingen te beperken, brengt het ook uitdagingen met zich mee op het gebied van toegangsbeheer en welke bronnen men kan vertrouwen en bereiken binnen de verschillende segmenten. 
+Een specifiek probleem binnen deze context is dat niet elk netwerksegment dezelfde root certificates wil vertrouwen, wat een aanzienlijk beveiligingsrisico met zich meebrengt.
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+Trust management biedt een mogelijke oplossing door dynamische en contextbewuste toegang te faciliteren, waarbij beslissingen worden genomen op basis van factoren zoals gebruikersidentiteit, gedragsanalyse en beleidsregels. Een belangrijke uitdaging is echter hoe de trust stores van endpoints in een netwerk centraal kunnen worden beheerd om dit probleem effectief aan te pakken. De implementatie van een effectief trust management-systeem in een heterogeen, gesegmenteerd netwerk vereist een grondige analyse van de risico's, beleidsmodellen en technologische vereisten.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+Vele bedrijven met grotere diverse netwerken zoals heterogene netwerken en gesegmenteerde netwerken hebben vandaag de dag nogsteeds moeite met het centraal beheren van de (root) certificaten die worden vertrouwd door hun endpoints. 
+Dit komt door de verspreide trust stores die gevormt worden door de verschillende gebruikte applicaties en besturingssystemen binnen het netwerk, daarnaast is het ook belangrijk om het aantal vertrouwde certificaten te beperken om de veiligheid van het netwerk te garanderen.
+Vele bedrijven hebben een netwerksegmentatie toegepast afhankelijk van hun bedrijfsrollen en -vereisten, maar dit brengt ook uitdagingen met zich mee op vlak van welke segmenten welke certificates vertrouwen en hoe dit kan worden afgedwongen.
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+Aan de hand van welke combinatie van tools en configuraties kan een trust management-systeem worden opgezet binnen een bedrijf met een heterogeen gesegmenteerd netwerk waarbij de inhoud van de trust stores van endpoints makkelijk en snel centraal kan worden beheerd?
+
+Deelvragen:
+\begin{itemize}
+    \item Wat zijn de belangrijkste concepten en technologieën achter PKI en truststorebeheer? 
+    \item Wat zijn de verschillende truststores die worden gebruikt door de meest voorkomende besturingssystemen en applicaties? Hoe kunnen deze worden beheerd?
+    \item Welke tools en technieken worden momenteel gebruikt voor truststorebeheer, en wat zijn hun beperkingen? 
+    \item Hoe kan de inhoud van de trust stores van endpoints centraal worden beheerd?
+    \item Hoe kan men de vertrouwde certificaten anders beheren binnen verschillende netwerksegmenten?
+    \item Welk architectuurplan zal worden gebruikt om de proof-of-concept virtuele omgeving op te zetten?
+    \item Hoe worden de gevonden tools en technieken geïmplementeerd in de proof-of-concept virtuele omgeving?
+    \item Wat is de effectiviteit van de opgezette proof-of-concept virtuele omgeving?
+    \item Welke aspecten zijn niet opgenomen in de proof-of-concept virtuele omgeving die in realiteit voor problemen kunnen zorgen?
+    \item Welke aanbevelingen kunnen worden gegeven aan bedrijven die een trust management-systeem willen implementeren?
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+Het doel binnen dit onderzoek is om een proof-of-concept virtuele omgeving op te zetten die systemen met veel voorkomende besturingssystemen en applicaties bevat, alsook netwerksegmentatie waarbij de trust stores van de endpoints centraal kunnen worden beheerd.
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
