@@ -73,6 +73,82 @@ Vaak heeft dan 1 machine een verschillend aantal trust stores die niet gesynchro
 
 De uitdagingen hier zijn dus het vermijden van overbodige vertrouwde root certificaten binnen een netwerk en zijn segmenten afhankelijk van de business requirements en het beheren van deze trust stores over verschillende machines en applicaties. 
 
+Voor het implementeren van een oplossing voor deze uitdagingen is het van belang om te weten hoe de truststores van de verschillende operating systemen en browsers werken en hoe deze kunnen worden beheerd. \break
+
+Windows heeft een truststore die de Trusted Root Certification Authorities store heet.
+In de officiële documentatie van Microsoft vermeld \textcite{MStruststore} dat de Trusted Root Certificate Authorities store op een Windows computer via de Microsoft Management Console (MMC) kan worden beheerd door de Certificate Manager snap-in te gebruiken.
+De Microsoft Management Console kan worden geopend door het commando \texttt{mmc.exe} uit te voeren in deen Run dialog. In het MCC venster kan men via file -> Add/Remove Snap-in de "Certificates" snap-in toevoegen.
+Hierna kan men dan in het MCC venster onder "Certificates (local computer)" -> "Trusted Root Certification Authorities" de lijst van vertrouwde root certificaten bekijken en beheren.
+\textcite{MStruststore} vermeld ook dat standaard de Trusted Root Certificate Authorities store geconfigureerd is met een aantal publieke CA's die de vereisten van de Microsoft Root Certificate Program hebben voltooid. \break
+
+Naast de GUI manier van beheren van de truststore, biedt Microsoft ook een manier om het te beheren via de command line aan de hand van het certutil commando.
+Certutil.exe is een command-line programma geinstalleerd als onderdeel van de Certitifate Services. Certutil.exe kan gebruikt worden voor het tonen van certificate authority (CA) configuratie informatie, het configureren van Certificate Services en CA componenten te back-uppen en te herstellen.
+Dit programma kan ook certificaten, key pairs en certificate chains verifiëren. \autocite{MScertutil}
+Om een certificate store te tonen aan de hand van certutil kan het volgende commando worden gebruikt:
+\begin{minted}{bash}
+  certutil [options] -store [CertificateStoreName [CertId [OutputFile]]]
+\end{minted}
+Waar CertificateStoreName de naam is van de certificate store, CertId de match token is van het certificaat en OutputFile de naam is van het bestand waarin de overeenkomende certificaten worden opgeslagen. \autocite{MScertutil}
+
+Om een certificaat toe te voegen aan een certificate store kan het volgende commando worden gebruikt:
+\begin{minted}{bash}
+  certutil [options] -addstore CertificateStoreName InFile
+\end{minted}
+Waar CertificateStoreName de naam is van de certificate store en InFile de certificate file is die moet worden toegevoegd. \autocite{MScertutil}
+
+Linux heeft niet zoals Windows één centrale trust store. In plaats daarvan heeft Linux verschillende trust stores die afhankelijk zijn van de applicatie of het OS.
+
+Binnen Ubuntu Server moet een certificaat in PEM formaat staan vooraleer het kan worden toegevoegd aan de trust store.
+Om een PEM-geformatteerd root CA certificaat met als naam "local-ca.crt" te installeren in de trust store van Ubuntu Server kan het volgende commando worden gebruikt:
+\begin{minted}{bash}
+  sudo apt-get install -y ca-certificates
+  sudo cp local-ca.crt /usr/local/share/ca-certificates
+  sudo update-ca-certificates
+\end{minted}
+
+Het is hierbij belangrijk dat het certificaat bestand de extensie .crt heeft anders zal het niet worden verwerkt.
+
+De CA trust store (die gegenereerd wordt door update-ca-certificates) is te vinden op de volgende locaties:
+\begin{itemize}
+  \item Als een file (PEM bundel) in /etc/ssl/certs/ca-certificates.crt
+  \item Als een OpenSSL-compatibele certificaat directory in /etc/ssl/certs/ca-certificates.pem
+\end{itemize} \autocite{UbunTruststore}
+\break
+
+Red Hat Enterprise Linux (RHEL) heeft een andere manier van het beheren van de trust store. RHEL biedt de Shared System Certificates aan.
+De Shared System Certificates opslag laat NSS, GnuTLS, OpenSSL en Java toe om een standaard bron te delen voor het ophalen van systeem certificate anchors en black list informatie.
+Standaard bevat de truststore de Mozilla CA list, die positieve en negatieve vertrouwen informatie bevat. Het systeem laat toe om de Mozilla CA lijst aan te passen of om een andere CA lijst te gebruiken. \autocite{RHELtruststore} \break
+
+In Red Hat Enterprise Linux 7 is de systeem-brede truststore te vinden in de directories /etc/pki/ca-trust/ en /usr/share/pki/ca-trust-source/ . De trust settings in /usr/share/pki/ca-trust-source/ worden behandeld met een lagere prioriteit dan de settings in /etc/pki/ca-trust/ .
+Certificaat bestanden worden anders behandeld afhankelijk van de subdirectory waarin ze worden geplaatst:
+\begin{itemize}
+  \item /usr/share/pki/ca-trust-source/anchors/ of /etc/pki/ca-trust/source/anchors/ : voor trust anchors.
+  \item /usr/share/pki/ca-trust-source/blacklist/ of /etc/pki/ca-trust/source/blacklist/ : voor niet vertrouwde certificaten.
+  \item /usr/share/pki/ca-trust-source/ of /etc/pki/ca-trust/source/ : voor certificaten in de extended BEGIN TRUSTED bestandsformaat.
+\end{itemize} \autocite{RHELtruststore}
+
+Om een certificaat in de simpele PEM of DER bestandsformaten aan de lijst van vertrouwde CA's op het systeem toe te voegen, kan je simpelweg het certificaat bestand kopiëren naar de /usr/share/pki/ca-trust-source/anchors/ of /etc/pki/ca-trust/source/anchors/ directory. Om de systeem-brede truststore te updaten ka je het update-ca-trust commando gebruiken zoals volgt:
+\begin{minted}{bash}
+  cp ~/certificate-trust-examples/Cert-trust-test-ca.pem /usr/share/pki/ca-trust-source/anchors/
+  update-ca-trust
+\end{minted} 
+
+Om de trust anchors op te lijsten, toe te voegen, veranderen of verwijderen kan het 'trust' commando gebruikt worden.
+Voor het oplijsten van de trust anchors wordt 'trust list' gebruikt.
+Een trust anchor opslaan in de trust store kan met het 'trust anchor' sub-commando en het specifiëren van het pad (vb.: path.to) naar het certificaat bestand, zoals volgt:
+\begin{minted}{bash}
+  trust anchor path.to/certificate.crt
+\end{minted} 
+Om een trust anchor te verwijderen kan een pad naar het certificaat of ID van het certificaat gebruikt worden:
+\begin{minted}{bash}
+  trust anchor --remove path.to/certificate.crt
+  trust anchor --remove "pkcs11:id=%AA%BB%CC%DD%EE;type=cert"
+\end{minted} 
+\autocite{RHELtruststore} \break
+
+
+
+
 %\begin{figure}
 %  \centering
 %  \includegraphics[width=0.8\textwidth]{grail.jpg}
