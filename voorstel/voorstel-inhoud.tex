@@ -15,37 +15,82 @@
 \section{Inleiding}%
 \label{sec:inleiding}
 
-Waarover zal je bachelorproef gaan? Introduceer het thema en zorg dat volgende zaken zeker duidelijk aanwezig zijn:
+In de digitale wereld is vertrouwen in beveiligingssystemen cruciaal, vooral binnen de financiële sector. Banken hebben complexe netwerken die moeten worden beschermd tegen cyberbedreigingen. Trust management, het beheren van vertrouwde relaties aan de hand van digitale certificaten en public key infrastructures (PKI's) speelt hierin een belangrijke rol.
 
-\begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
-\end{itemize}
+Daarbij is het effectief beheren van truststores, de verzameling van vertrouwde certificaten, essentieel om veilige gegevensuitwisseling en transacties te garanderen.
 
-Denk er aan: een typische bachelorproef is \textit{toegepast onderzoek}, wat betekent dat je start vanuit een concrete probleemsituatie in bedrijfscontext, een \textbf{casus}. Het is belangrijk om je onderwerp goed af te bakenen: je gaat voor die \textit{ene specifieke probleemsituatie} op zoek naar een goede oplossing, op basis van de huidige kennis in het vakgebied.
+In vele netwerken worden truststores verspreid beheerd, hun locatie is afhankelijk van de gebruikte applicatie of besturingssystemen. Dit leidt tot een gefragmenteerde aanpak, wat niet alleen inefficiënt is, maar ook de kans vergroot op verouderde certificaten en beveiligszwaktes.
 
-De doelgroep moet ook concreet en duidelijk zijn, dus geen algemene of vaag gedefinieerde groepen zoals \emph{bedrijven}, \emph{developers}, \emph{Vlamingen}, enz. Je richt je in elk geval op it-professionals, een bachelorproef is geen populariserende tekst. Eén specifiek bedrijf (die te maken hebben met een concrete probleemsituatie) is dus beter dan \emph{bedrijven} in het algemeen.
+Door een centrale aanpak te ontwikkelen voor truststorebeheer wordt er gestreefd naar meer consistentie, eenvoud en veiligheid in het beheer van certificaten. Dit onderzoek richt zich op het formuleren van richtlijnen en oplossingen die specifiek van toepassing op de behoeftes van de financiële sector.
 
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
+Om dit doel te bereiken, beantwoordt dit onderzoek de volgende deelvragen:
 
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
+1. Wat zijn de belangrijkste concepten en technologieën achter PKI en truststorebeheer?
+
+2. Wat zijn de verschillen tussen gedistribueerd en gecentraliseerd truststorebeheer, en welke voordelen biedt een gecentraliseerde aanpak?
+
+3. Welke tools en technieken worden momenteel gebruikt voor truststorebeheer, en wat zijn hun beperkingen?
+
+4. Welke specifieke uitdagingen en eisen gelden voor truststorebeheer in bankomgevingen?
+
+5. Welke componenten moeten worden opgenomen in een virtueel bankennetwerk om een realistisch beeld te creëren?
+
+6. Hoe kan een gecentraliseerde oplossing voor truststorebeheer worden ontworpen en geïmplementeerd in een bankennetwerk?
+
+7. Hoe kan de veiligheid, efficiëntie en schaalbaarheid van de gecentraliseerde oplossing worden getest en geëvalueerd?
+
+8. In hoeverre voldoet de gecentraliseerde oplossing aan de beveiligings- en compliance-eisen van een bankomgeving?
+
+9. Wat zijn de praktische voordelen en beperkingen van een gecentraliseerde truststorebeheeroplossing in vergelijking met een gedistribueerde aanpak?
+
+10. Welke aanbevelingen kunnen worden gedaan voor banken die een centrale truststorebeheerstrategie willen implementeren?
+
+Door deze vragen te beantwoorden, streeft het onderzoek ernaar richtlijnen en oplossingen te formuleren die aansluiten bij de specifieke behoeften van de financiële sector.
 
 %---------- Stand van zaken ---------------------------------------------------
 
 \section{Literatuurstudie}%
 \label{sec:literatuurstudie}
 
-Hier beschrijf je de \emph{state-of-the-art} rondom je gekozen onderzoeksdomein, d.w.z.\ een inleidende, doorlopende tekst over het onderzoeksdomein van je bachelorproef. Je steunt daarbij heel sterk op de professionele \emph{vakliteratuur}, en niet zozeer op populariserende teksten voor een breed publiek. Wat is de huidige stand van zaken in dit domein, en wat zijn nog eventuele open vragen (die misschien de aanleiding waren tot je onderzoeksvraag!)?
+Bij het begrijpen van trust management is het belangrijk om te weten wat een public key infrastructure (PKI) en digitale certificaten zijn.
 
-Je mag de titel van deze sectie ook aanpassen (literatuurstudie, stand van zaken, enz.). Zijn er al gelijkaardige onderzoeken gevoerd? Wat concluderen ze? Wat is het verschil met jouw onderzoek?
+Een digitaal certificaat is een file die verbonden is met een cryptografische key pair en het authenticeert de identiteit van een website, individu, organisatie, gebruiker of apparaat. Zulke certificaten worden soms ook public key certificates of identity certificates genoemd
 
-Verwijs bij elke introductie van een term of bewering over het domein naar de vakliteratuur, bijvoorbeeld~\autocite{Hykes2013}! Denk zeker goed na welke werken je refereert en waarom.
+Een certificaat bevat het onderwerp, wat dient als de identiteit samen met een digitale signatuur. Het doel van digitale certificaten is om de identiteit en encryptie te verzekeren van een website, individu, organisatie, apparaat, gebruiker of server. \autocite{Digicert}
 
-Draag zorg voor correcte literatuurverwijzingen! Een bronvermelding hoort thuis \emph{binnen} de zin waar je je op die bron baseert, dus niet er buiten! Maak meteen een verwijzing als je gebruik maakt van een bron. Doe dit dus \emph{niet} aan het einde van een lange paragraaf. Baseer nooit teveel aansluitende tekst op eenzelfde bron.
+Een PKI beveiligd data en bouwt vertrouwen via deze digitale certificaten, die uitgegeven worden door certificate autorities (CA's) aan bedrijven nadat zij een certificate signing request (CSR) hebben gemaakt. Eens een CSR is goedgekeurd en een certificaat is uitgegeven kan een bedrijf of individu zijn communicatie, web domeinen en/of documenten authenticeren en beveiligen zolang het certificaat is gemaakt voor dit doeleinde en geldig is. \autocite{GlobalSign}
 
-Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle nodige info aanwezig is om de bron terug te vinden (zoals uitvoerig besproken in de lessen Research Methods).
+Naast PKI en digitale certificaten zijn truststores en keystores ook van belang bij trust management.
+
+\textcite{IBM_2023} definieert dat Trust stores en keystores cryptografische artefacten bevatten, met andere woorden certificaten en private keys. Deze artefacten worden dan gebruikt door protocollen zoals TLS. Een keystore bevat persoonlijke certificaten samen met de overeenkomstige private keys die gebruikt worden om de eigenaar van het certificaat te identificeren.
+
+Voor een TLS verbinding stelt een persoonlijk certificaat de identiteit van een endpoint voor, beide de client en de server hebben dit certificaat om elkaar te identificeren.
+
+Een truststore bevat dan weer signer certificates die door de andere endpoints vertrouwd worden, deze certificates zijn ook gekend als "certificate autority certificates".
+
+Deze signer certificate bevatten een public key die gebruikt wordt om een persoonlijk certificaat te valideren. Door het toevoegen van de signer certificate in de client zijn truststore, kan de client de server vertrouwen om een TLS verbinding te maken.
+
+Vele software en besturingssystemen komen dan ook vooraf geïnstalleerd met hun eigen trust stores.
+
+"Er zijn 4 grote organisaties die zulke trust stores beheren: 1. Microsoft root certificate program die gebruikt wordt voor Windows. 2. Apple root certificate program is gebruikt voor alle Mac apparaten. 3. De Mozilla root certificates program wordt gebruikt door Mozilla zelf en meeste Linux distributies. 4. Google root certificate program wordt gebruikt door Google chrome en andere Google applicaties." \autocite{Encrypt_Cons}
+
+Volgens \textcite{SSL_ins} is een van de uitdagingen voor het beheren van trust stores, dat in grote organisaties met heterogene netwerken vele trust stores gedecentraliseerd liggen waarbij er een nood is aan gecoördineerd management.
+
+Dit kan opgelost worden door een gecentraliseerd management systeem, dit maakt het makkelijker om veranderingen te coördineren.
+
+Andere bronnen raden zulke gecentraliseerde systemen sterk aan.
+
+"Organisaties moeten overwegen de default trust stores af te wijzen. Ze zouden een eigen corporate-level trust store moeten maken aan de hand van certificate white-listing om te bepalen welke certificaten hierin worden opgenomen." \autocite{Venafi}
+
+Bij het opstellen van deze centrale truststore binnen de financiële sector brengt dit ook enkele uitdagingen met zich mee. Er zijn namelijk beveiligingseisen voor de infrastructuur van banken waaraan moet worden voldaan.
+
+Daarbij blijkt dat tegen het einde van 2024 de cyber security binnen europese banken moeten voldoen aan de " Digital Operational Resilience Requirements" (DORA). \autocite{Gorobeț2024Convergence}
+
+Naast de DORA eisen zijn er ook nog andere eisen die van toepassing zijn op de financiële sector zoals de "Payment Services Directive 2" (PSD2).
+
+In het onderzoek van \textcite{Gounari2024} blijkt dat PSD2 de nieuwe vereisten binnen communicatie systemen baseert op SCA, de nieuwe requirement die specifieke technische standaarden introduceert zoals PSD2-compliant certificaten.
+
+In het uitvoeren van dit onderzoek zal er dus moeten worden gekeken naar welke richtlijnen en eisen van toepassing zijn voor het gecentraliseerde management systeem alsook naar hoe deze kunnen worden geïmplementeerd.
 
 % Voor literatuurverwijzingen zijn er twee belangrijke commando's:
 % \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
@@ -60,25 +105,72 @@ Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur v
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Hier beschrijf je hoe je van plan bent het onderzoek te voeren. Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
+Het onderzoek naar centrale truststorebeheer in een banknetwerk zal opgedeeld worden in drie fases: een literatuurstudie, praktijkstudie en uiteindelijke rapportage en oplevering.
 
-Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
+In de eerste maand zal de eerste fase van het onderzoek uitgevoerd worden, de literatuurstudie.
 
-Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
+Het doel in deze fase is om een diepgaand begrip te krijgen over trust management, certificaatbeheer en de verschillende aanpakken bij truststorebeheer.
 
-Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
+In deze literatuurstudie zal er gekeken worden naar de bestaande theorieën, technologieën en andere tools die momenteel worden gebruikt in praktijk.
 
-Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
+Ook zal er gekeken worden naar de voordelen van gecentraliseerde truststorebeheer en de eisen binnen de financiële sector.
 
-Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+Op het einde van de eerste fase zal er samen gezeten worden met de co-promotor om mogelijke oplossingen te bespreken die verder zullen worden uitgewerkt in de praktijkstudie.
+
+De info die verkregen wordt in deze literatuurstudie zal de basis leggen voor de volgende fase van dit onderzoek: de praktijkstudie.
+
+Deze fase zou starten in maart en loopt tot eind april met een duur van 8 weken. Deze praktijkstudie opgedeeld in 3 delen.
+
+het ontwerpen van een virtuele omgeving, de implementatie van het centraal truststorebeheer en de evaluatie van de oplossing.
+
+In de eerste stap zal er weer worden samengezeten met de co-promotor om te bepalen welke componenten van het banknetwerk gesimuleerd moeten worden in de virtuele testomgeving.
+
+Hierbij wordt gekeken naar de typische netwerkarchitectuur van een bank, inclusief servers (zoals applicatieservers en webservers), firewalls, proxyservers en verschillende besturingssystemen (zoals Linux en Windows).
+
+Ook wordt er een certificate authority (CA) opgezet om het beheer van certificaten te simuleren.
+
+Deze virtuele omgeving zal worden opgezet binnen GNS3, een netwerkemulator die het mogelijk maakt om complexe netwerken te simuleren.
+
+Het doel is om een realistisch netwerk te creëren dat de complexiteit van een bankomgeving weerspiegelt.
+
+De tweede stap, de implementatie van centraal truststorebeheer, begint midden maart en duurt drie weken.
+
+In deze fase wordt een gecentraliseerde oplossing voor truststorebeheer opgezet. Dit gebeurt door middel van de tools die gekozen werden samen met de co-promotor in de literatuurstudie in combinatie met zelfgeschreven scripts voor het certificaatbeheer.
+
+Het doel hier is dat bij het genereren of updaten van een nieuw root certificaat, de truststores op elk systeem in het netwerk consistent zijn. Ook zullen er veiligheidscontroles geïmplementeerd worden, zoals het monitoren voor ongeldige of verlopen certificaten.
+
+Na de implementatie volgt de derde stap van de praktijkstudie, die bestaat uit de evaluatie en validatie van de oplossing.
+
+Deze fase begint begin april en duurt drie weken.
+
+De centrale vraag is hoever de geïmplementeerde oplossing voldoet aan de beveiligingseisen (zoals DORA, PSD2, GDPR, ISO,...) van een bankennetwerk.
+
+Er worden testcases opgesteld om veelvoorkomende uitdagingen te simuleren, zoals het herroepen van een rootcertificaat of het omgaan met verlopen certificaten.
+
+Ook wordt de schaalbaarheid en efficiëntie van de oplossing getest.
+
+Bij de schaalbaarheid zal er gekeken worden naar hoe de oplossing omgaat met het veranderen of uitbreiden van het netwerk. Bij de efficiëntie zal er gekeken worden naar hoe snel aanpassingen van certificaten binnen de centrale truststore verspreid worden binnen het netwerk zonder het verstoren van andere diensten.
+
+Als laatste fase van dit onderzoek zal er een rapportage gemaakt worden. Dit zal gebeuren in het begin van mei met een tijdsduur van 4 weken. De rapportage zal de ontwerpkeuzes en oplossing beschrijven alsook de evaluatie en resultaten van deze oplossing.
+
+Op basis van de bevindingen worden dan conclusies en aanbevelingen geformuleerd voor de implementatie van centraal truststorebeheer in banknetwerken. 
+
+\begin{center}
+    \includegraphics[scale=0.26]{flowchart}
+\end{center}
 
 %---------- Verwachte resultaten ----------------------------------------------
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
+Dit onderzoek verwacht dat gecentraliseerd truststorebeheer verbeteringen oplevert in beveiliging, efficiëntie en schaalbaarheid voor een banknetwerk.
 
-Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
+Door de certificaten op een centrale plaats te beheren, wordt het risico op verlopen of ongeldige certificaten verkleind, wat de volledige netwerkbeveiliging versterkt.
 
-Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
+Het gecentraliseerde beheer zal ook de efficiëntie verhogen door automatisering van certificaatdistributie, wat tijd bespaart en menselijke fouten vermindert.
 
+Bovendien maakt de oplossing schaalbaarheid mogelijk, wat essentieel is voor de groei van banknetwerken.
+
+Dit onderzoek zal praktische aanbevelingen bieden voor de implementatie van deze oplossing in bankomgevingen, waardoor banken hun certificaatbeheer kunnen optimaliseren en hun netwerkbeveiliging kunnen versterken.
+
+In conclusie verwacht dit onderzoek te bevestigen dat gecentraliseerd truststorebeheer niet alleen de veiligheid verbetert, maar ook bijdraagt aan een efficiënter en beter beheersbaar netwerk, met duidelijke voordelen voor de banksector. 
