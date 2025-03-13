@@ -15,8 +15,8 @@
 %\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
 
 %Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
-
-\label{sec:Basis begrippen}
+\section{\IfLanguageName{dutch}{Basisbegrippen}{Basic concepts}}%
+\label{sec:Basisbegrippen}
 Om het onderzoeksonderwerp samen met de achterliggende uitdaging te begrijpen, is het belangrijk om de werking van een Public Key Infrastructure (PKI) te begrijpen.
 \textcite{Thales2025} definieert een PKI als een set van hardware, software, policies, processen en procedures die noodzakelijk zijn voor het maken, beheren, uitgeven, gebruiken, opslaan en intrekken van digitale certificaten en publieke keys.
 PKI's zijn de basis die het gebruik van technologieëen zoals digitale handtekeningen en encryptie mogelijk maakt over een grote populatie van gebruikers.
@@ -24,11 +24,7 @@ Zij helpen namelijk met het vaststellen van de identiteit van personen, apparate
 
 Een groot deel van PKI's zijn Digitale Certificaten en Certificate Authorities (CA's).
 Een certificate authority is een bedrijf of organisatie die de identiteit van entiteiten (zoals websites, e-mail adressen, bedrijven, individuen, enz.) valideert en ze vastbindt aan cryptografische sleutels door middel van het uitgeven van electronische documenten gekend als digitale certificaten.
-Deze certificaten brengen een aantal functionaliteiten zoals: authenticatie, Encryptie en integriteit.
-Authenticatie: Een certificaat doet zich voor als een getuigschrift dat de identiteit valideert van de entiteit waaraan het is uitgegeven.
-Encryptie: Een certificaat kan gebruikt worden voor beveiligde communicatie over onbeveiligde netwerken zoals het internet.
-Integriteit: Een certificaat kan via digitale handtekeningen de integriteit van documenten verzekeren zodanig ze niet gewijzigd kunnen worden door een derde partij tijdens de transmissie.
-Deze certificaten zorgen dus voor een beveiligde en geëncrypteerde communicatie tussen 2 partijen via public key cryptografie. \autocite{SSLcom} \break
+Een certificaat doet zich voor als een getuigschrift dat de identiteit valideert van de entiteit waaraan het is uitgegeven. \autocite{SSLcom} \break
 
 \begin{figure}
   \centering
@@ -36,7 +32,7 @@ Deze certificaten zorgen dus voor een beveiligde en geëncrypteerde communicatie
   \caption[Certificate enrollment.]{\label{fig:certenr}Deze afbeelding toont de stappen en componenten in het certificaat uitgave proces.}
 \end{figure}
 
-Wanneer een certificaat wordt aangevraagd bij een CA, moet de aanvrager eerst een public en private key genereren. De private key moet onder de controle en eigendom van de aanvrager blijven. In sommige gevallen worden de private keys gegenereerd en veilig bewaart in een Hardware Security Module (HSM) die behoort tot de CA. \autocite{SSLcom}
+Wanneer een certificaat wordt aangevraagd bij een CA, moet de aanvrager eerst een public en private key genereren. De private key moet onder de controle en eigendom van de aanvrager blijven. In sommige gevallen worden de private keys gegenereerd en veilig bewaart in een Hardware Security Module (HSM). \autocite{SSLcom}
 Om de registratie van certificaten te starten, maakt de aanvrager een Certificate Signing Request (CSR) aan. Deze CSR bevat de public key en andere informatie van de aanvrager die in het certificaat zal worden opgenomen, zoals de domeinnaam voor een SSL/TLS certificaat of de aanvrager's e-mail adres voor een S/MIME certificaat.
 Daarna wordt de CSR ingedient bij de CA. De CA zal de identiteit van de aanvrager samen met de bijkomende informatie verifiëren. De CA kan verschillende manieren gebruiken om de aanvrager zijn identiteit te verifiëren, zoals e-mail verificatie, domein validatie of manuele validatie van juridische documenten.
 Wanneer de CA het verificatie proces heeft voltooid en vaststelt dat de aanvrager legitiem is, zal het digitale certificaat worden uitgegeven. Het certificaat zal de aanvrager zijn public key en bijkomende informatie bevatten, alsook een geldigheidstermijn en de digitale handtekening van de CA.
@@ -74,6 +70,7 @@ Vaak heeft dan 1 machine een verschillend aantal trust stores die niet gesynchro
 
 De uitdagingen hier zijn dus het vermijden van overbodige vertrouwde root certificaten binnen een netwerk en zijn segmenten afhankelijk van de business requirements en het beheren van deze trust stores over verschillende machines en applicaties. 
 
+\section{\IfLanguageName{dutch}{Verschillende truststores}{Various truststores}}%
 \label{sec:Verschillende truststores}
 
 Voor het implementeren van een oplossing voor deze uitdagingen is het van belang om te weten hoe de truststores van de verschillende operating systemen en browsers werken en hoe deze kunnen worden beheerd. \break
@@ -192,11 +189,17 @@ De 'Install' key zoekt standaard naar certificaten in de onderstaande locaties. 
   \end{itemize}
 \end{itemize} \autocite{MozillaCA} \break
 
+\section{\IfLanguageName{dutch}{Bestaande tools}{Existing tools}}%
 \label{sec:Bestaande tools}
 
-Er bestaan verschillende tools die kunnen helpen met het beheren van truststores over verschillende machines en applicaties.
-Er zijn tools die niet specifiek zijn gemaakt voor het beheren van truststores maar functionaliteiten aanbieden die dit wel mogelijk maken.
-Een voorbeeld hiervan is Ansible.
+Er bestaan verschillende gratis tools die kunnen helpen met het beheren van truststores over verschillende machines en applicaties.
+Deze tools zijn niet ontwikkeld specifiek voor het beheren van truststores maar bieden functionaliteiten aan voor het beheren van end-points hun configuratie.
+Voor Windows bestaat Microsoft System Center Configuration Manager (SCCM).
+
+\textcite{ConfigMan} zegt dat Configuration Manager deel uitmaakt van de Microsoft Intune familie van producten. De Microsoft Intune familie van producten is een geïntegreerde oplossing voor het beheren van al jouw apparaten.
+Configuration Manager vebreed en werkt samen met vele Microsoft technologieëen en oplossing zoals onder andere Certificate Services.
+
+Een meer algemene oplossing die werkt voor beide Windows en Linux is Ansible.
 Ansible is een open-source IT automation engine die provisioning, configuratie management, applicatie deployment, orkestratie en vele andere IT taken automatiseert.
 Ansible kan gratis worden gebruikt en het project profiteert van de ervanging en intelligentie van zijn duizende gebruikers. \autocite{Ansible}
 
@@ -232,8 +235,24 @@ Chef Workstation maakt het mogelijk om 'cookbooks' te schrijven en je infrastruc
 Eenmaal het ontwikkelen van je code gedaan is op je workstation, dan kan je deze code uploaden naar de CHef Infra Server. De Chef Infra Server is een centrale opslagplaats voor je configuratie data. Het slaat cookbooks, policies en metadata van elk systeem op. Het communiceren met de Chef Infre Server vanaf een workstation kan via het 'knife' commando.
 Chef Infra Clients contacteren deze Chef Infra Server periodiek om de laatste cookbooks op te halen. Als de huidige staat van de node niet overeenstemt met wat de cookbook beschrijft, zal de Chef Infra Client de cookbook instrucites uitvoeren. \autocite{Chef} \break
 
+\section{\IfLanguageName{dutch}{Infrastructuur studie}{Infrastructure study}}%
+\label{sec:Infrastructuur studie}
+bedrijven.
+Voor een realistisch beeld te scheppen van een bedrijfsomgeving, zal er gekeken worden naar resultaten van meerdere vragenlijsten en enquêtes die zijn gepubliceerd door verschillende bedrijven en organisaties.
 
+\textcite{NetcraftSurvey} publiceert maandelijks een web server survey waarin ze de marktaandelen van web servers onderzoeken, uit de resultaten van de survey van januari 2025 blijkt nginx het grootste marktaandeel te hebben binnen alle onderzochte sites met 19,60\% alsook alle onderzochte actieve sites met 18,89\%.
+Naast Nginx heeft Apache het tweede grootste marktaandeel met 16,96\% van alle onderzochte sites en 17,24\% van alle actieve sites.
 
+Binnen de Stack Overflow developer survey van 2024 kan er ook gekeken worden naar veel gebruikte technologieëen binnen de professionele wereld.
+In de resultaten kan er gekeken worden naar welke van de eerder vermelde tools het meest gebruikt worden in de professionele wereld. \autocite{StackOverflowSurvey} rapporteert onder overige tools dat Ansible gebruikt wordt door 8,1\% van de ondervraagde professionele developers, Pupper door 1,1\% en Chef door 0,7\%. \break
+
+Binnen de resultaten van de Stack Overflow survey kan er ook gekeken worden naar de meest gebruikte databases. Uit deze resultaten blijkt dat PostgreSQL de meest gebruikte database is met 51,9\% van de ondervraagde professionele developers die het gebruiken. MySQL is de tweede meest gebruikte database met 39,4\% van de ondervraagde professionele developers die het gebruiken. \autocite{StackOverflowSurvey} \break
+
+Het bepalen welke DNS server technologie het meest gebruikt wordt binnen bedrijven is moeilijk omdat dit geen publiek beschikbare data is. Hier zal BIND gekozen worden, volgens \textcite{Bind9} is BIND 9 de eerste, oudste en meest gebruikte oplossing waarmee netwerk engineers al meer bekend zijn dan met enige andere systemen. \break
+
+\textcite{SecSpMail} publiceert rapporten op verschillende technologieëen. Een van deze rapporten bestudeert alle zichtbare mailservers op het internet en kijkt naar welke onderliggende software ze gebruiken. Uit de resultaten van Maart 2025 blijkt dat Exim de meest gebruikte mailserversoftware is met 55,05\% en Postfix de tweede meest gebruikte met 38,52\%. \break
+
+Deze informatie zal gebruikt worden voor het bepalen van de gekozen technologieëen binnen de proof-of-concept virtuele omgeving.
 %\begin{figure}
 %  \centering
 %  \includegraphics[width=0.8\textwidth]{grail.jpg}
