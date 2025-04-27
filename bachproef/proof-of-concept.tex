@@ -1,0 +1,242 @@
+\chapter{\IfLanguageName{dutch}{Proof-of-concept}{Proof-of-concept}}%
+\label{ch:proof-of-concept}
+\label{sec:Virtuele omgeving}
+
+Voor het opzetten van een oplossing en deze te kunnen testen en evalueren, is er een virtuele omgeving opgezet.
+Deze virtuele omgeving is opgezet in GNS3, een netwerkemulator die het mogelijk maakt om netwerkapparatuur alsook virtuele machines te simuleren.
+Binnen deze virtuele omgeving zal er aan netwerksegmentatie gedaan worden, het netwerk zal opgedeelde worden in 3 segmenten: een Admin, DMZ en employee segment.
+Binnen het Admin segment zullen grotendeels van de servers staan alsook een workstation, in het DMZ segment zal er 1 server staan en in het employee segment zullen de werkstations staan.
+Deze segmentatie bestaat met als doel om het aantal vertrouwde root certificaten te beperken tot de benoodigdheden van de verschillende segmenten, zo worden er minder root certificaten vertrouwd door de verschillende segmenten wat tot lagere security risico's leidt.
+Binnen het Admin segment staan er 4 servers, "Windowsserver", "Database", "CA" en "Vault" aslook is hier een workstation "Windowsclient2". Het DMZ segment heeft een server "Webserver" en het employee segment heeft 1 workstation WindowsClient1. \nabla
+
+\label{sec:Webserver}
+De webserver draait op Ubuntu 22.04 en heeft een Nginx webserver draaien met een certificaat dat ondertekend werdt door de CA server van binnen deze virtuele omgeving.
+Het doel van deze webserver is om de functionaliteit van het aanpassen van de truststore te testen, als een end-point de webpagina kan bereiken zonder waarschuwing via het https protocol, dan betekend dat de server "CA" zijn root certificaat aanwezig is in de end-point zijn truststore.
+
+\label{sec:Windows server}
+Deze server draait Windows Server 2022 en is de domein controller van de virtuele omgeving. Het domein is "Bachelorproef.local" en de server heeft een Active Directory (AD) opgezet. De Active Directory bevat 2 logins voor de windows clients "Employee1" en "Admin1". Binnen de AD zal elke Windows client die het netwerk betreed automatisch gestoken worden. 
+Deze clients worden manueel in de juiste organisational unit (OU) gestoken. In dit geval zijn dit de OU "Employee" en "Admin".
+
+\label{sec:CA}
+De CA server draait een Almalinux 8 image en is een Certificate Authority (CA). Het root certificaat is gemaakt met OpenSSL en is ondertekend door de CA zelf. Zoals eerder vermeld is er een leaf certificaat aangemaakt en ondertekend voor de webserver.
+
+\label{sec:Vault}
+De Vault server draait ook Ubuntu 22.04 en heeft een Hashicorp Vault server draaien. Deze vault server zal gebruikt worden om de root certificaten op een centrale plaats op te slaan.
+
+\label{sec:Windows client 1}
+Deze Windows client draait Windows 11, en bevind zich in het Employee netwerksegment. Deze client maakt deel uit van het domein "Bachelorproef.local" en is ook lid van de OU "Employee".
+
+\label{sec:Windows client 2}
+Deze Windows client draait ook Windows 11 en bevind zich in het Admin netwerksegment. Deze client maakt ook deel uit van het domein "Bachelorproef.local" en is ook lid van de OU "Admin".
+
+\label{sec:Oplossing voor Windows end-points}
+Om windows clients hun truststores centraal te kunnen beheren, kan er simpelweg een GPO (Group Policy Object) aangemaakt worden die root certificaten bevat en deze kan dan toegepast worden op een OU binnen de Active Directory.
+Er kan dus een GPO aangemaakt worden per OU (in dit geval de 3 OU's voor de 3 netwerksegmenten) die elk de juiste root certificaten bevatten.
+Voor deze proof of concept zal er een verzameling van root certificaten opgeslagen worden in een directory op de Windows server, deze directory zal 3 subdirectories bevatten voor elk netwerksegment. De root certificaten die in deze subdirectories staan zijn de root certificaten die de clients in dat netwerksegment moeten vertrouwen.
+De GPO's zullen dan de root certificaten uit deze subdirectories halen en deze toevoegen aan de truststore van de clients in dat netwerksegment.
+De GPO's kunnen als volgt aangemaakt worden:
+\begin{itemize}
+    \item Open de Group Policy Management Console (GPMC) op de Windows server.
+    \item Maak een nieuwe GPO aan door met de rechtermuisknop op de OU te klikken en "Create a GPO in this domain, and Link it here" te selecteren.
+    \item Geef de GPO een naam, bijvoorbeeld "Truststore update Employee".
+    \item Klik met de rechtermuisknop op de GPO en selecteer "Edit".
+    \item Ga naar Computer Configuration > Policies > Windows Settings > Security Settings > Public Key Policies > Trusted Root Certification Authorities.
+    \item Klik met de rechtermuisknop en selecteer "Import".
+    \item Volg de wizard om het root certificaat te importeren vanuit de directory op de Windows server.
+    \item Herhaal deze stappen voor de andere OU's en root certificaten.
+\end{itemize}
+
+De GPO's kunnen dan toegepast worden, dit kan door met de rechtermuisknop op de OU te klikken en "Link an Existing GPO" te selecteren. Selecteer dan de GPO die je wilt toepassen op de OU. \n
+
+Op de clients kan je dan de GPO's toepassen door het volgende commando uit te voeren in de command prompt:
+\begin{lstlisting}[language=bash]
+    gpupdate /force
+\end{lstlisting}
+Ook kan de GPO toegepast worden door de clients opnieuw op te starten.
+
+\label{sec:Oplossing voor Linux end-points}
+\label{sec:Oplossing met Ansible, zonder Vault}
+Om het probleem van het centraal beheren van de root certificaten op te lossen, kan er een Ansible playbook gemaakt worden dat root certificaten kan toevoegen aan de truststores van de linux systemen.
+De CA server zal in deze proof-of-concept ook de Ansible control server zijn. Dit is de server die de Ansible playbooks zal uitvoeren op de end-points.
+Hiervoor is een inventory bestand nodig dat de IP adressen van de end-points bevat alsook de locatie van de key die gebruikt zal worden voor de SSH verbinding. Dit bestand voor deze omgeving ziet er als volgt uit:
+\begin{lstlisting}[language=bash]
+
+\end{lstlisting}
+
+Net zoals bij de Windows server zal er een directory aangemaakt worden op de server "CA" die subdirectories bevat voor elk netwerksegment. Deze subdirectories bevatten de root certificaten die de end-points in dat netwerksegment moeten vertrouwen.
+Met deze bestanden en directories kan er een Ansible playbook gemaakt worden dat de root certificaten uit de juiste subdirectory haalt en toevoegt aan de truststore van de end-points. Dit kan gedaan worden met het volgende Ansible playbook:
+\begin{lstlisting}[language=bash]
+\end{lstlisting}
+
+\label{sec:Oplossing met Ansible, met Vault}
+
+Een van de problemen met de vorige oplossing is dat de root certificaten in een directory staan die niet beveiligd is. Dit brengt een risico mee dat de certificaten binnen de directory kunnen worden aangepast of verwijderd.
+Om dit op te lossen kan er gebruik gemaakt worden van Hashicorp Vault. Deze tool kan gebruikt worden als een beveilgd centrale opslagplaats voor de root certificaten. De root certificaten kunnen dan in de vault opgeslagen worden en de Ansible playbook kan dan de root certificaten ophalen uit de vault in plaats van uit een directory.
+Hiervoor moet er een vault server opgezet worden, dit zal gebeuren op de server "Vault".
+Hashicorp Vault kan worden opgestart met de volgende commando:
+\begin{lstlisting}[language=bash]
+    vault server -dev -dev-listen-address=0.0.0.0:8200
+\end{lstlisting}
+Voor deze proof-of-concept zal de vault server in dev mode draaien. Dit is een testmodus die het mogelijk maakt om snel te experimenteren met Vault zonder dat er een volledige configuratie nodig is. In deze modus zal de vault server ook geen persistentie hebben, wat betekent dat alle gegevens uit de vault verloren gaan als de vault sluit of de server stopt.
+Om bij heropstarting dezelfde data te behouden werd er een bash script gemaakt die de root certificaten in de vault plaatst. Dit script ziet er als volgt uit:
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+\end{lstlisting}
+
+Naast de Vault server is er ook een Vault client nodig. Deze client is nodig om de Vault server te kunnen benaderen en de root certificaten op te halen. Deze Vault client heeft ook een manier van authenticatie nodig. Voor deze proof-of-concept zal er gebruikt gemaakt worden van de token authenticatie.
+Op de server "CA" kan de Vault client geconfigureerd worden met volgende .hcl file:
+\begin{lstlisting}[language=bash]
+\end{lstlisting}
+
+De Vault client kan dan geconfigureerd worden met de volgende commando's:
+\begin{lstlisting}[language=bash]
+    export VAULT_ADDR=http://<IP address of the Vault server>:8200
+    export VAULT_TOKEN
+\end{lstlisting}
+
+De playbook kan dan aangepast worden om de root certificaten uit de vault te halen in plaats van uit de directory. Dit kan gedaan worden met het volgende Ansible playbook:
+\begin{lstlisting}[language=bash]
+
+\end{lstlisting}
+
+
+\label{sec:Oplossing met Chef en Vault}
+Een probleem met de vorige oplossing is dat Ansible een lage schaalbaarheid heeft. Dit betekent dat als er veel end-points zijn, de Ansible playbook traag zal zijn en mogelijk niet alle end-points kan bereiken.
+Om dit probleem aan te pakken kan er gebruikt gemaakt worden van Chef. Chef verschilt van Ansible op het vlak van wie de instructies uitvoert. Bij Ansible is de Ansible control server verantwoordelijk voor het uitvoeren van de instructies op de end-points, terwijl bij Chef de end-points zelf verantwoordelijk zijn voor het uitvoeren van de instructies.
+Hiervoor is er beide nood aan een Chef infra server en een Chef infre client. De infra server is de server die de instructies zal geven aan de end-points en de infra client is de client die de instructies zal uitvoeren op de end-points. \na
+
+De infra server kan geconfigureerd worden met het volgende commando:
+\begin{lstlisting}[language=bash]
+    chef-server-ctl reconfigure
+\end{lstlisting}
+
+Chef maakt gebruikt van cookbooks, dit zijn bestanden die de instructies bevatten voor de end-points. Voor deze oplossing zal er dus een cookbook gemaakt worden dat de root certificaten uit de vault haalt en deze toevoegt aan de truststore van de end-points. Dit kan gedaan worden met het volgende Chef cookbook:
+\begin{lstlisting}[language=bash]
+    require 'vault'
+    require 'json'
+
+    Vault.address = 'http://vault.bachelorproef.local:8200'
+    Vault.token = ::File.read("/var/lib/vault/agent-token").strip
+
+    network_segment = node['network_segment'] || raise("Missing network_segment attribute")
+
+    # Pull the manifest
+    Chef::Log.info("Fetching manifest for network segment: #{network_segment}")
+    manifest_secret = Vault.logical.read("secret/data/certs/#{network_segment}/_manifest")
+    manifest_data = manifest_secret.data[:data]
+
+    Chef::Log.info("Manifest data: #{manifest_data.inspect}")
+
+    # Retrieve the 'keys' field from manifest_data
+    keys = manifest_data[:keys] # Use symbolized key
+
+    # Log the raw keys value for debugging
+    Chef::Log.info("Raw 'keys' value: #{keys.inspect}")
+
+    # Validate the 'keys' field
+    if keys.nil? || keys.strip.empty?
+    raise "No 'keys' field found in manifest or 'keys' is empty"
+    end
+
+    # Parse the 'keys' field as JSON
+    begin
+    Chef::Log.info("Parsing 'keys' field as JSON...")
+    cert_list = JSON.parse(keys.strip) # Directly parse the keys string as JSON after stripping whitespace
+    rescue JSON::ParserError => e
+    raise "Failed to parse 'keys' as JSON: #{e.message}"
+    end
+
+    # Log the parsed cert_list for debugging
+    Chef::Log.info("Parsed cert_list: #{cert_list.inspect}")
+
+    # If cert_list is empty, raise an error
+    if cert_list.empty?
+    raise "No certificates found in manifest"
+    end
+
+    # Process each certificate
+    cert_list.each do |cert_name|
+    Chef::Log.info("Processing certificate: #{cert_name}")
+    cert_path = "secret/data/certs/#{network_segment}/#{cert_name}"
+    Chef::Log.info("Fetching certificate from path: #{cert_path}")
+
+    cert_secret = Vault.logical.read(cert_path)
+    Chef::Log.info("Vault response for #{cert_path}: #{cert_secret.inspect}")
+
+    cert_pem = cert_secret.data[:data][:cert] # Corrected to use :cert as the key
+    Chef::Log.info("Certificate content for #{cert_name}: #{cert_pem.inspect}")
+
+    # Ensure cert_pem is not nil or empty
+    if cert_pem.nil? || cert_pem.strip.empty?
+        raise "Certificate content for #{cert_name} is empty or missing"
+    end
+
+    target_path = case node['platform_family']
+                    when 'debian'
+                    "/usr/local/share/ca-certificates/#{cert_name}.crt"
+                    when 'rhel'
+                    "/etc/pki/ca-trust/source/anchors/#{cert_name}.crt"
+                    else
+                    raise "Unsupported platform family"
+                    end
+
+    file target_path do
+        content cert_pem
+        owner 'root'
+        group 'root'
+        mode '0644'
+        notifies :run, 'execute[update-trust-store]', :delayed
+    end
+    end
+
+    # Update trust store
+    execute 'update-trust-store' do
+    command case node['platform_family']
+            when 'debian'
+                'update-ca-certificates'
+            when 'rhel'
+                'update-ca-trust extract'
+            else
+                raise "Unsupported platform family"
+            end
+    action :nothing
+    end
+\end{lstlisting}
+
+Deze cookbook maakt gebruik van de vault gem om de interactie met de vault server mogelijk te maken. De manier waarop communicatie wordt gemaakt met de vault server is via de token authenticatie. 
+Het is daarbij belangrijk dat de token beschikbaar is op de end-point in het bestand "/var/lib/vault/agent-token".
+Ook moet elke Chef client geconfigureerd worden met de juiste attributen. Dit kan gedaan worden met het volgende ruby script:
+\begin{lstlisting}[language=bash]
+
+\end{lstlisting}
+
+Elke Chef client moet dus een attribuut "network_segent", deze variabele wordt gebruikt voor de juiste subdirectory te kiezen in de vault.
+
+\label{sec:Oplossing voor Windows end-points met Vault}
+Zoals eerder vermeld is het beheren van de root certificaten voor de truststores in directories niet veilig. Om de bestaande Vault server te gebruiken bij de Windows clients kan de Windows server zelf de root certificaten ophalen uit de vault en deze toevoegen aan de GPO's.
+Om dit te doen kan er een PowerShell script gemaakt worden dat de root certificaten uit de vault haalt en deze toevoegt aan de GPO's. Dit kan gedaan worden met het volgende PowerShell script:
+\begin{lstlisting}[language=bash]
+    # Vault server address and token
+    $vault
+\end{lstlisting}
+
+Daarnaast is het ook een nadeel dat om de GPO te kunnen toepassen, de clients opnieuw moeten opgestart worden of de GPO's moeten geforceerd worden. OM te garanderen dat de GPO's altijd up-to-date zijn, kan er gebruikt gemaakt worden van SCCM (System Center Configuration Manager). Dit is een tool die het mogelijk maakt om software en updates te beheren op de Windows clients. 
+SCCM kan ook gebruikt worden om de GPO's toe te passen op de clients zonder dat deze opnieuw moeten opgestart worden. Dit kan gedaan worden door een SCCM task sequence aan te maken die de GPO's toepast op de clients. Deze task sequence kan dan automatisch uitgevoerd worden op de clients zonder dat deze opnieuw moeten opgestart worden.
+Deze task sequence kan gemaakt worden met het volgende PowerShell script:
+\begin{lstlisting}[language=bash]
+    # SCCM server address and credentials
+    $sccmServer = "sccm.bachelorproef.local"
+    $sccmUsername = "admin"
+    $sccmPassword = "password"
+
+    # Create a new SCCM task sequence
+    $taskSequenceName = "Update GPOs"
+    $taskSequenceDescription = "Update GPOs on all clients"
+    $taskSequence = New-SCCMTaskSequence -Name $taskSequenceName -Description $taskSequenceDescription -Server $sccmServer -Username $sccmUsername -Password $sccmPassword
+
+    # Add the GPO update step to the task sequence
+    Add-SCCMTaskSequenceStep -TaskSequence $taskSequence -StepType "Run Command" -Command "gpupdate /force" -Server $sccmServer -Username $sccmUsername -Password $sccmPassword
+
+    # Deploy the task sequence to all clients
+    Deploy-SCCMTaskSequence -TaskSequence $taskSequence -CollectionName "All Systems" -Server $sccmServer -Username $sccmUsername -Password $sccmPassword
+\end{lstlisting}
