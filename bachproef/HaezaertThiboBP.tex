@@ -21,6 +21,21 @@
 %% \usepackage[chapter]{minted}
 %% If you compile with the make_thesis.{bat,sh} script, use the following
 %% import instead:
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\small, % Use monospaced font
+    keywordstyle=\color{blue}\bfseries, % Keywords in bold blue
+    commentstyle=\color{gray}, % Comments in gray
+    stringstyle=\color{red}, % Strings in red
+    numbers=left, % Line numbers on the left
+    numberstyle=\tiny\color{gray}, % Line number style
+    stepnumber=1, % Line number step
+    breaklines=true, % Automatic line breaking
+    frame=single, % Frame around the code
+    captionpos=b, % Caption position (bottom)
+    tabsize=4, % Tab size
+    showstringspaces=false % Don't show spaces in strings
+}
 \usepackage[chapter,outputdir=../output]{minted}
 \usemintedstyle{solarized-light}
 

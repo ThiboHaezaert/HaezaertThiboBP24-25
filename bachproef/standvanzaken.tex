@@ -73,7 +73,7 @@ De uitdagingen hier zijn dus het vermijden van overbodige vertrouwde root certif
 \section{\IfLanguageName{dutch}{Verschillende truststores}{Various truststores}}%
 \label{sec:Verschillende truststores}
 
-Voor het implementeren van een oplossing voor deze uitdagingen is het van belang om te weten hoe de truststores van de verschillende operating systemen en browsers werken en hoe deze kunnen worden beheerd. \break
+Voor het implementeren van een oplossing voor deze uitdagingen is het van belang om te weten hoe de truststores van de verschillende besturingssystemen en browsers werken en hoe deze kunnen worden beheerd. \break
 
 Windows heeft een truststore die de Trusted Root Certification Authorities store heet.
 In de officiële documentatie van Microsoft vermeld \textcite{MStruststore} dat de Trusted Root Certificate Authorities store op een Windows computer via de Microsoft Management Console (MMC) kan worden beheerd door de Certificate Manager snap-in te gebruiken.
@@ -81,7 +81,7 @@ De Microsoft Management Console kan worden geopend door het commando \texttt{mmc
 Hierna kan men dan in het MCC venster onder "Certificates (local computer)" -> "Trusted Root Certification Authorities" de lijst van vertrouwde root certificaten bekijken en beheren.
 \textcite{MStruststore} vermeld ook dat standaard de Trusted Root Certificate Authorities store geconfigureerd is met een aantal publieke CA's die de vereisten van de Microsoft Root Certificate Program hebben voltooid. \break
 
-Naast de GUI manier van beheren van de truststore, biedt Microsoft ook een manier om het te beheren via de command line aan de hand van het certutil commando.
+Naast de GUI manier van beheren van de truststore, biedt Microsoft ook een manier om het te beheren via de command line aan de hand van het \texttt{certutil} commando.
 Certutil.exe is een command-line programma geinstalleerd als onderdeel van de Certitifate Services. Certutil.exe kan gebruikt worden voor het tonen van certificate authority (CA) configuratie informatie, het configureren van Certificate Services en CA componenten te back-uppen en te herstellen.
 Dit programma kan ook certificaten, key pairs en certificate chains verifiëren. \autocite{MScertutil}
 Om een certificate store te tonen aan de hand van certutil kan het volgende commando worden gebruikt:
@@ -94,12 +94,12 @@ Om een certificaat toe te voegen aan een certificate store kan het volgende comm
 \begin{minted}{bash}
   certutil [options] -addstore CertificateStoreName InFile
 \end{minted}
-Waar CertificateStoreName de naam is van de certificate store en InFile de certificate file is die moet worden toegevoegd. \autocite{MScertutil}
+Waar CertificateStoreName de naam is van de certificate store en InFile de certificate file is die moet worden toegevoegd. \autocite{MScertutil} \break
 
-Linux heeft niet zoals Windows één centrale trust store. In plaats daarvan heeft Linux verschillende trust stores die afhankelijk zijn van de applicatie of het OS.
+Linux heeft niet zoals Windows één centrale trust store. In plaats daarvan heeft Linux verschillende trust stores die afhankelijk zijn van de applicatie of fr distributie van Linux.
 
 Binnen Ubuntu Server moet een certificaat in PEM formaat staan vooraleer het kan worden toegevoegd aan de trust store.
-Om een PEM-geformatteerd root CA certificaat met als naam "local-ca.crt" te installeren in de trust store van Ubuntu Server kan het volgende commando worden gebruikt:
+Om een PEM-geformatteerd root CA certificaat met als voorbeeld naam "local-ca.crt" te installeren in de trust store van Ubuntu Server kan het volgende commando worden gebruikt:
 \begin{minted}{bash}
   sudo apt-get install -y ca-certificates
   sudo cp local-ca.crt /usr/local/share/ca-certificates
@@ -108,7 +108,7 @@ Om een PEM-geformatteerd root CA certificaat met als naam "local-ca.crt" te inst
 
 Het is hierbij belangrijk dat het certificaat bestand de extensie .crt heeft anders zal het niet worden verwerkt.
 
-De CA trust store (die gegenereerd wordt door update-ca-certificates) is te vinden op de volgende locaties:
+De trust store (die gegenereerd wordt door update-ca-certificates) is te vinden op de volgende locaties:
 \begin{itemize}
   \item Als een file (PEM bundel) in /etc/ssl/certs/ca-certificates.crt
   \item Als een OpenSSL-compatibele certificaat directory in /etc/ssl/certs/ca-certificates.pem
@@ -116,8 +116,8 @@ De CA trust store (die gegenereerd wordt door update-ca-certificates) is te vind
 \break
 
 Red Hat Enterprise Linux (RHEL) heeft een andere manier van het beheren van de trust store. RHEL biedt de Shared System Certificates aan.
-De Shared System Certificates opslag laat NSS, GnuTLS, OpenSSL en Java toe om een standaard bron te delen voor het ophalen van systeem certificate anchors en black list informatie.
-Standaard bevat de truststore de Mozilla CA list, die positieve en negatieve vertrouwen informatie bevat. Het systeem laat toe om de Mozilla CA lijst aan te passen of om een andere CA lijst te gebruiken. \autocite{RHELtruststore} \break
+De Shared System Certificates storage laat NSS, GnuTLS, OpenSSL en Java toe om een standaard bron te delen voor het ophalen van systeem certificate anchors en black list informatie.
+Standaard bevat de truststore de Mozilla CA list, die positieve en negatieve trust informatie bevat. Het systeem laat toe om de Mozilla CA lijst aan te passen of om een andere CA lijst te gebruiken. \autocite{RHELtruststore} \break
 
 In Red Hat Enterprise Linux 7 is de systeem-brede truststore te vinden in de directories /etc/pki/ca-trust/ en /usr/share/pki/ca-trust-source/ . De trust settings in /usr/share/pki/ca-trust-source/ worden behandeld met een lagere prioriteit dan de settings in /etc/pki/ca-trust/ .
 Certificaat bestanden worden anders behandeld afhankelijk van de subdirectory waarin ze worden geplaatst:
@@ -135,7 +135,7 @@ Om een certificaat in de simpele PEM of DER bestandsformaten aan de lijst van ve
 
 Om de trust anchors op te lijsten, toe te voegen, veranderen of verwijderen kan het 'trust' commando gebruikt worden.
 Voor het oplijsten van de trust anchors wordt 'trust list' gebruikt.
-Een trust anchor opslaan in de trust store kan met het 'trust anchor' sub-commando en het specifiëren van het pad (vb.: path.to) naar het certificaat bestand, zoals volgt:
+Een trust anchor opslaan in de trust store kan met het 'trust anchor' sub-commando en het specifiëren van het pad (vb.: 'path.to') naar het certificaat bestand, zoals volgt:
 \begin{minted}{bash}
   trust anchor path.to/certificate.crt
 \end{minted} 
@@ -158,7 +158,7 @@ Als in deze directory grote security objecten zitten (zoals grote CRL's), zal NS
 In het geval dat cert8.db en/of key3.db niet bestaan, zal NSS de data lezen van oudere versies vand eze databases (bv.: cert7.db, cert6.db,...) en zal deze data gebruiken om een nieuwe cert8.db en key3.db te maken. \autocite{MozillaWiki}
 
 Ook beweert \textcite{MozillaCA} dat standaard Firefox op Windows, MacOS en Android zal zoeken en gebruik maken van de third-party CA's die zijn opgenomen in de operating system zijn trust store.
-Firefox kan geconfigureerd worden om automatisch te zoeken naar CA's die in de Windows certificate store zijn toegevoegd door een gebruiker of administrator. Dit kan gedaan worden door de security.enterprise_roots.enabled optie in te stellen op 'true' in de config van Firefox.
+Firefox kan geconfigureerd worden om automatisch te zoeken naar CA's die in de Windows certificate store zijn toegevoegd door een gebruiker of administrator. Dit kan gedaan worden door de \texttt{security.enterprise_roots.enabled} optie in te stellen op 'true' in de config van Firefox.
 Firefox zal dan de HKLM/SOFTWARE/Microsoft/SystemCertificates (Het pad dat overeenstemt met de API flag CERT\_SYSTEM\_STORE\_LOCAL\_MACHINE) registry directory inspecteren voor CA's die vertrouwd worden om certiifcaten uit te geven voor TLS web server authenticatie. \autocite{MozillaCA}
 Ook wordt er gekeken naar de volgende andere locaties:
 \begin{itemize}
@@ -166,7 +166,7 @@ Ook wordt er gekeken naar de volgende andere locaties:
   \item HKLM/SOFTWARE/Microsoft/EnterpriseCertificates/Root/Certificates (pad in API flag CERT\_SYSTEM\_STORE\_LOCAL\_MACHINE\_ENTERPRISE)
 \end{itemize} \autocite{MozillaCA}
 
-Textcite{MozillaCA} voorziet ook dat enterprise policies kunnen gebruikt worden voor het toevoegen van CA certificaten in Firefox.
+\textcite{MozillaCA} voorziet ook dat enterprise policies kunnen gebruikt worden voor het toevoegen van CA certificaten in Firefox.
 De 'ImportEnterpriseRoots' key op 'true' zetten, zorgt ervoor dat Firefox root certificaten zal vertrouwen.
 De 'Install' key zoekt standaard naar certificaten in de onderstaande locaties. Er kan ook een specifiek pad worden opgegeven. Als Firefox daar geen certificaten vindt zal het de standaard directories bekijken:
 \begin{itemize}
@@ -203,19 +203,19 @@ Een meer algemene oplossing die werkt voor beide Windows en Linux is Ansible.
 Ansible is een open-source IT automation engine die provisioning, configuratie management, applicatie deployment, orkestratie en vele andere IT taken automatiseert.
 Ansible kan gratis worden gebruikt en het project profiteert van de ervanging en intelligentie van zijn duizende gebruikers. \autocite{Ansible}
 
-Ansible zijn grootste sterktes zijn eenvoud en ease-of-use. Het heeft ook een sterke focus op beveiliging en betrouwbaarheid, met zo weinig mogelijk bewegende delen. Het gebruikt OpenSSH voor transpor (met andere transports en pull modes beschikbaar als alternatieven), en gebruikt leesbare taal die ontworpen is om snel aan de start te gaan zonder enige training.
+Ansible zijn grootste sterkte is eenvoud. Het heeft ook een sterke focus op beveiliging en betrouwbaarheid, met zo weinig mogelijk bewegende delen. Het gebruikt OpenSSH voor transport (met andere transport en pull modes beschikbaar als alternatieven), en gebruikt leesbare taal die ontworpen is om snel aan de start te kunnen gaan zonder enige training.
 Red Hat Ansible Automation Platform is een abbonement gebaseerde oplossing die bouwt op de basis van Ansible met een aantal ondernemingsgerichte functionaliteiten.
 Beide community Ansible en Ansible Automation Platform zijn gebouwt op het concept van een control node en een managed node. Ansible wordt gebruikt op de control node waar bijvoorbeeld een gebruiker een ansible-playbook command uitvoert. Managed nodes zijn de apparaten die worden geautomatiseerd zoals bijvoorbeeld een Windows server.
 Voor Linux en Windows te automatiseren, connecteert Ansible met de managed nodes en verstuurt het kleine programma's genaamd Andisble modules uit. Deze programma's zijn geschreven als bronmodellen van de gewenste staat van het systeem. Ansible voert dan deze modules uit (standaard over SSH), en verwijdert ze na ze voltooien.
 Deze modules zijn ontworpen om idempotent te zijn waar mogelijk, zodanig ze alleen een aanpassing uitvoeren op een systeem als dat nodig is. \autocite{AnisbleHow} \break
 
 Een andere tool die mogelijks kan helpen is Open Source Puppet.
-Puppet is een open source conifguartie management tool geproduceert door Puppet Labs. Er kunnen systeem configuraties gedefinieerd owrden aan de hand van Puppet's declaratieve taal en deze configuraties kunnen dan opgeslagen worden in bestanden genaamd Puppet Manifests, deze hebben de .pp bestand extensie.
-Puppet kan standalone op een systeem draaien of in een agent/master configuratie. Met standalone Puppet draaien systemen het lokaal om hun eigen configuraties toe te passen. Met agent/master Puppet beheert een centrale Puppet master server of servers meerdere systemen die de Puppet agent draaien.
+Puppet is een open source configuratie management tool geproduceert door Puppet Labs. Er kunnen systeem configuraties gedefinieerd worden aan de hand van Puppet's declaratieve taal en deze configuraties kunnen dan opgeslagen worden in bestanden genaamd Puppet Manifests.
+Puppet kan standalone op een systeem draaien of in een agent/master configuratie. Met standalone Puppet draaien systemen het programma lokaal om hun eigen configuraties aan te passen. Met agent/master Puppet beheert een centrale Puppet master server of servers meerdere systemen die de Puppet agent draaien.
 Bij beide implementaties worden Puppet manifests gebruikt om systeem configuraties naar de verwachte staat te brengen. Daarnaast bestaat er ook nog een commerciële versie van Puppet genaamd Puppet Enterprise. \autocite{Puppet} \break
 
 Naast Ansible en Puppet bestaan er ook nog andere tools zoals Saltstack en Chef.
-Gebouwt op Python, Salt is een event-driven automatiseringstool en framework dat is ontworkom om complexe IT systemen te deployeren, configureren en beheren. Salt kan gebruikt worden voor veel voorkomende administratie taken te automatiseren en te verzekeren dat alle componenten van je infrastructuur operationeel zijn in de verwachte staat.
+Gebouwt op Python, is Salt een event-driven automatiseringstool en framework dat is ontworpen om complexe IT systemen te deployeren, configureren en beheren. Salt kan gebruikt worden voor veel voorkomende administratie taken te automatiseren en te verzekeren dat alle componenten van je infrastructuur operationeel zijn in de verwachte staat.
 Salt heeft vele mogelijke gebruiksdoeleinden, zoals configuratie beheer, wat als volgt inhoud:
 \begin{itemize}
   \item Het beheren van het deployeren van besturingssystemen en hun configuratie.
@@ -224,35 +224,35 @@ Salt heeft vele mogelijke gebruiksdoeleinden, zoals configuratie beheer, wat als
   \item Verzekeren dat de configuratie consistent is en het vermijden van drift.
 \end{itemize}
 
-Salt is ideaal voor configuratie management omdat het integreerbaar en aanpasbaar is en goed samenwerkt met vele bestaande systemen en technologieën. Salt maakt het mogelijk om applicaties implementeren en beheren die gebruik maken van elke technologiestack die op bijna elk besturingssysteem draait, inclusief verschilllende soorten netwerkapparaten zoals switches en routers van verschillende leveranciers.
-Daarnaast kan het ook gebruikt worden voor het automatiseren en orkestreren van routine IT processenm zoals veel voorkomende noodzakelijke taken voor geplande server downtime of het upgraden van besturingssystemen en applicaties. 
+Salt maakt het mogelijk om applicaties te implementeren en beheren die gebruik maken van elke technologiestack die op bijna elk besturingssysteem draait, inclusief verschilllende soorten netwerkapparaten zoals switches en routers van verschillende leveranciers.
+Daarnaast kan het ook gebruikt worden voor het automatiseren en orkestreren van routine IT processen zoals veel voorkomende noodzakelijke taken voor geplande server downtime of het upgraden van besturingssystemen en applicaties. 
 Ook kan Salt gebruikt worden om een zelfbewuste, zelf herstellende systemen te maken die automatisch kunnen reageren op uitvallingen, veel voorkomende administratie problemen of andere belangrijke gebeurtenissen. \autocite{Saltstack} \break
 
-\textcite{Chef} noemt chef een automation company. Sinds ze in 2008 zijn opgericht, brengen ze developers en systeem administrators samen met hun product, Chef Infra. Over de jaren hebben ze uitgebreid wat ze bedoelen met automatisering. Vandaag biedt Chef automatiseringsoplossingen voor beide infrasctructuur en applicaties van ontwikkeling tot productie.
-Chef Infra is een krachtig automatiseringsplatform dat infrastructuur naar code transformeert onafhankelijk of je werkt in de cloud, on-premise of in een hybride omgeving, Chef Infra automatiseert hoe infrastructuur is geconfigureerd, gedeployed en beheerd doorheen het netwerk, ongeacht de grootte.
+\textcite{Chef} noemt Chef een automation company. Vandaag biedt Chef automatiseringsoplossingen voor beide infrasctructuur en applicaties van ontwikkeling tot productie.
+Chef Infra automatiseert hoe infrastructuur is geconfigureerd, gedeployed en beheerd doorheen het netwerk, ongeacht de grootte.
 
-Chef Workstation maakt het mogelijk om 'cookbooks' te schrijven en je infrastructuur te administreren. Chef Workstation hoort te draaien op de machine die je dagelijks gebruikt, ongeacht of deze Windows, Linux of MacOS draait.
-Eenmaal het ontwikkelen van je code gedaan is op je workstation, dan kan je deze code uploaden naar de CHef Infra Server. De Chef Infra Server is een centrale opslagplaats voor je configuratie data. Het slaat cookbooks, policies en metadata van elk systeem op. Het communiceren met de Chef Infre Server vanaf een workstation kan via het 'knife' commando.
+Chef Workstation maakt het mogelijk om 'cookbooks' te schrijven en je infrastructuur te beheren. Chef Workstation hoort te draaien op de machine die je dagelijks gebruikt, ongeacht of deze Windows, Linux of MacOS draait.
+Eenmaal het ontwikkelen van je code gedaan is op je workstation, dan kan je deze code uploaden naar de CHef Infra Server. De Chef Infra Server is een centrale opslagplaats voor je configuratie data. Het slaat cookbooks, policies en metadata van elk systeem op. Het communiceren met de Chef Infra Server vanaf een workstation kan via het 'knife' commando.
 Chef Infra Clients contacteren deze Chef Infra Server periodiek om de laatste cookbooks op te halen. Als de huidige staat van de node niet overeenstemt met wat de cookbook beschrijft, zal de Chef Infra Client de cookbook instrucites uitvoeren. \autocite{Chef} \break
 
 \section{\IfLanguageName{dutch}{Infrastructuur studie}{Infrastructure study}}%
 \label{sec:Infrastructuur studie}
-bedrijven.
-Voor een realistisch beeld te scheppen van een bedrijfsomgeving, zal er gekeken worden naar resultaten van meerdere vragenlijsten en enquêtes die zijn gepubliceerd door verschillende bedrijven en organisaties.
 
-\textcite{NetcraftSurvey} publiceert maandelijks een web server survey waarin ze de marktaandelen van web servers onderzoeken, uit de resultaten van de survey van januari 2025 blijkt nginx het grootste marktaandeel te hebben binnen alle onderzochte sites met 19,60\% alsook alle onderzochte actieve sites met 18,89\%.
-Naast Nginx heeft Apache het tweede grootste marktaandeel met 16,96\% van alle onderzochte sites en 17,24\% van alle actieve sites.
+Voor een realistisch beeld te scheppen van een bedrijfsomgeving, zal er gekeken worden naar resultaten van meerdere vragenlijsten en enquêtes die het marktaandeel van verschillende technologieëen onderzoeken. \break
+
+\textcite{NetcraftSurvey} publiceert maandelijks een web server survey waarin ze de marktaandelen van web servers onderzoeken, uit de resultaten van de survey van januari 2025 blijkt Nginx het grootste marktaandeel te hebben binnen alle onderzochte sites met 19,60\% alsook alle onderzochte actieve sites met 18,89\%.
+Naast Nginx heeft Apache het tweede grootste marktaandeel met 16,96\% van alle onderzochte sites en 17,24\% van alle actieve sites. \break
 
 Binnen de Stack Overflow developer survey van 2024 kan er ook gekeken worden naar veel gebruikte technologieëen binnen de professionele wereld.
 In de resultaten kan er gekeken worden naar welke van de eerder vermelde tools het meest gebruikt worden in de professionele wereld. \autocite{StackOverflowSurvey} rapporteert onder overige tools dat Ansible gebruikt wordt door 8,1\% van de ondervraagde professionele developers, Pupper door 1,1\% en Chef door 0,7\%. \break
 
 Binnen de resultaten van de Stack Overflow survey kan er ook gekeken worden naar de meest gebruikte databases. Uit deze resultaten blijkt dat PostgreSQL de meest gebruikte database is met 51,9\% van de ondervraagde professionele developers die het gebruiken. MySQL is de tweede meest gebruikte database met 39,4\% van de ondervraagde professionele developers die het gebruiken. \autocite{StackOverflowSurvey} \break
 
-Het bepalen welke DNS server technologie het meest gebruikt wordt binnen bedrijven is moeilijk omdat dit geen publiek beschikbare data is. Hier zal BIND gekozen worden, volgens \textcite{Bind9} is BIND 9 de eerste, oudste en meest gebruikte oplossing waarmee netwerk engineers al meer bekend zijn dan met enige andere systemen. \break
+Het bepalen welke DNS server technologie het meest gebruikt wordt binnen bedrijven is moeilijk omdat dit geen publiek beschikbare data is. Hier zal BIND gekozen worden, volgens \textcite{Bind9} is BIND 9 de eerste, oudste en meest gebruikte oplossing waarmee netwerk engineers al meer bekend zijn dan met andere systemen. \break
 
-\textcite{SecSpMail} publiceert rapporten op verschillende technologieëen. Een van deze rapporten bestudeert alle zichtbare mailservers op het internet en kijkt naar welke onderliggende software ze gebruiken. Uit de resultaten van Maart 2025 blijkt dat Exim de meest gebruikte mailserversoftware is met 55,05\% en Postfix de tweede meest gebruikte met 38,52\%. \break
+\textcite{SecSpMail} publiceert ook rapporten op verschillende technologieëen. Een van deze rapporten bestudeert alle zichtbare mailservers op het internet en kijkt naar welke onderliggende software ze gebruiken. Uit de resultaten van Maart 2025 blijkt dat Exim de meest gebruikte mailserversoftware is met 55,05\% en Postfix de tweede meest gebruikte met 38,52\%. \break
 
-Deze informatie zal gebruikt worden voor het bepalen van de gekozen technologieëen binnen de proof-of-concept virtuele omgeving.
+Deze informatie zal gebruikt worden voor het bepalen van de gebruikte technologieëen binnen de proof-of-concept virtuele omgeving.
 %\begin{figure}
 %  \centering
 %  \includegraphics[width=0.8\textwidth]{grail.jpg}
