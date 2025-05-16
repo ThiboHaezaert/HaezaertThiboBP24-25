@@ -14,5 +14,19 @@
 % Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder 
 %onderzoek?
 
-\lipsum[76-80]
 
+Tijdens het onderzoek werden er meerdere mogelijkheden gevonden om centraal de truststore van alle Windows en Linux systemen in een netwerk te beheren, waarbij ervoor gezorgd kan worden dat niet elk systeem dezelfde root certificaten heeft. \\
+
+Hiervoor kan een centrale opslagplaats zoals een Hashicorp Vault gebruikt worden om de root certificaten op te slaan en beheren, waarbij er een indeling wordt gemaakt per netwerksegment met daarin alleen de root certificaten die nodig zijn voor dat segment. \\
+
+De Windows end-points kunnen deze certificaten gemakkelijk toegewezen krijgen door gebruik van Group Policy Objects (GPO's), maar Microsoft biedt geen mogelijkheid aan in Powershell om certificaten toe te voegen of verwijderen uit de GPO's wat het een lage schaalbaarheid geeft op vlak van het aantal root certificaten dat kan toegevoegd worden.
+Als alternatief kan er gebruik gemaakt worden van System Center Configuration Manager (SCCM) samen met een Powershell script dat de certificaten voor het juiste netwerksegment uit de Vault haalt. Het script kan uitgerold worden als een package voor de Windows end-points om zo ingepland worden om op regelmatige basis de root certificaten te vernieuwen. \\
+
+Aan de Linux kant kan er gebruik gemaakt worden van zowel Ansible als Chef om zo instructies uit te voeren op de Linux end-points die net zoals het Powershell script de root certificaten uit de Vault haalt en deze toevoegt aan de truststore van het systeem. 
+Ansible kan meer tijd in beslag nemen om de root certificaten te vernieuwen op een groot aantal end-points, maar heeft een makkelijker opzet en is meer gebruiksvriendelijker dan Chef. 
+Maar Chef legt de verantwoordelijkheid van het uitvoeren van de instructies bij de end-points zelf, wat het een snellere oplossing maakt voor het vernieuwen van de root certificaten ook bij een groter aantal end-points. \\
+
+De configuratie van deze oplossingen werden geïmplenteerd in een proof-of-concept omgeving die een basis kan leggen voor bedrijven om te bepalen welke oplossing het beste past bij hun infrastructuur en voorkeuren.
+Uit de oplossing bleek dat ondanks hier de verscschillende indelingen van de vertrouwde root certificaten gebaseerd zijn op de netwerksegmenten, dat de indeling gemaakt kan worden op eender welk criterium dat het bedrijf wenst, zolang de SCCM groepen, OU's, Ansible inventory of Chef nodes de correcte configuratie hebben. \\
+
+Bedrijven kunnen dan zelf verder onderzoeken hoe deze oplossing op een grotere schaal kan gebruikt worden om availability en security te garanderen. Daarnaast kan er ook verder onderzocht worden hoe bedrijven de updates van de truststores kunnen afstemmen met functionaliteiten van hun bestaande PKI's.

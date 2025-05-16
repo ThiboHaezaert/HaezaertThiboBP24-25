@@ -36,7 +36,7 @@
 \IfLanguageName{english}{%
 \selectlanguage{dutch}
 \chapter*{Samenvatting}
-\lipsum[1-4]
+
 \selectlanguage{english}
 }{}
 
@@ -45,4 +45,32 @@
 
 \chapter*{\IfLanguageName{dutch}{Samenvatting}{Abstract}}
 
-\lipsum[1-4]
+
+Het beheren van alle truststores en hun trust (de root certificaten die men vertrouwt), binnen een netwerk kan een tijdrovende taak zijn voor bedrijven. Zeker als het gaat over verschillende end-points met verschillende besturingssystemen, waarbij niet elke end-point dezelfde root certificaten nodig heeft.
+Het is belangrijk dat bedrijven de root certificaten die ze gebruiken goed beheren, omdat deze certificaten bepalen welke communicatiesystemen vertrouwd worden en welke niet. 
+Het vertrouwen van onnodige certificaten kan leiden tot een verhoogd risico op cyberaanvallen, terwijl het niet vertrouwen van noodzakelijke certificaten kan leiden tot een operationeel risico door het niet kunnen bereiken van bepaalde bronnen. \\
+
+De vraag die deze bachelorproef beantwoorde is hoe bedrijven de truststores van hun systemen kunnen beheren, waarbij er rekening gehouden wordt met de verschillende besturingssystemen en de verschillende netwerksegmenten binnen een netwerk.
+Deze bachelorproef streeft ernaar om deze vraag te beantwoorden door het leveren van een oplossingen die bedrijven kunnen gebruiken voor het beheren van de systeem truststores van Windows en Linux end-points.
+Daarnaast worden er ook aanbevelingen gegeven voor bedrijven die deze oplossingen willen implementeren in hun infrastructuur. \\
+
+Om tot deze oplossing te komen, werd er eerst een literatuurstudie uitgevoerd die belangrijke concepten en achtergrond informatie aanhaalde en daarnaast ook veel voorbereidende informatie gaf voor het ontwerpen van een oplossing.
+Na een literatuurstudie werd een proof-of-concept opgezet waarin verschillende tools voor trust management werden getest.
+%Deze omgeving is heterogeen, wat betekend dat er zowel Windows als Linux end-points aanwezig zijn. Ook is er segmentatie toegepast, met als doel dat systemen binnen hetzelfde netwerksegment dezelfde root certificaten vertrouwen. \\
+
+In de proof-of-concept omgeving werden er voor beide Linux als Windows end-points 2 mogelijke oplossingen gevonden.
+Bij Windows werd er gebruik gemaakt van Group Policy Objects (GPO's) voor de eerste oplossing en System Center Configuration Manager (SCCM) voor de tweede oplossing.
+%Alhoewel de GPO's een gebruiksvriendelijke oplossing zijn, is het niet mogelijk om het toevoegen of verwijderen van root certificaten in de GPO's te automatiseren met Powershell, wat ervoor zorgt dat dit manueel moet gebeuren. Dit is niet schaalbaar bij een groot aantal root certificaten. Ook worden de GPO's enkel toegepast bij opstart of uitvoeren van een commando, wat ervoor zorgt dat de root certificaten niet altijd up-to-date zijn.
+%SCCM biedt de mogelijkheid aan om Powershell scripts op regelmatige basis uit te voeren op de Windows end-points, wat ervoor zorgt dat de root certificaten vaker up-to-date zijn. Daarnaast kan er een Hashicorp Vault gebruikt worden om de root certificaten op een centraal punt op te slaan en beheren, zo kan het Powershell script de root certificaten uit de Vault halen en deze toevoegen aan de truststore van de Windows end-points. \\
+Bij Linux werd in de eerste oplossing gewerkt met Ansible en later bij de tweede oplossing met Chef. 
+%Ansible kan aan de hand van een oplijsting van end-points en instructies om root certificaten over te kopieren naar de truststores de truststores beheren via SSH verbindingen. Ansible legt alle verantwoordelijkheid bij de Ansible node zelf, wat ervoor kan zorgen dat bij een groot aantal end-points het een lange tijd kan duren tot de root certificaten vernieuwd zijn.
+%Chef daarentegen laat de end-points zelf de instructies uitvoeren, wat het mogelijk maakt een groter aantal end-points op een snellere manier te beheren. De chef cookbooks kunnen dan ook gebruikt maken van de Hashicorp Vault om de root certificaten van de halen. \\
+Beide oplossingen hebben hun eigen voor- en nadelen, maar hun toepasbaarheid hangt af van de infrastructuur van een bedrijf en hun voorkeuren. \\
+
+De oplossing kan eenvoudig aangepast worden, zodat het bepalen van vertrouwde root certificaten niet beperkt blijft tot netwerksegmentatie, maar ook op basis van andere criteria kan gebeuren.
+Daarnaast werden er nog een aantal aanbevelingen gegeven zoals het afstemmen van de truststore updates met activiteiten van een bedrijf hun bestaande PKI's en het verder onderzoeken van de mogelijkheden van de oplossingen op een grotere schaal. \\
+
+%De scope en tijdsbeperking van deze bachelorproef hebben ervoor gezorgd dat er niet gekeken werd naar de security van de oplossingen, maar dat deze wel een basis kunnen leggen voor bedrijven om verder onderzoek te doen naar de security van hun truststores.
+%Dit onderzoek heeft ook geen oog gehad voor IoT devices hun truststores of MacOS systemen, deze zouden dus ook nog verder onderzocht moeten worden door de bedrijven zelf.
+
+Door de beperkte scope werd niet ingegaan op security-aspecten, IoT-devices of MacOS-systemen. Deze onderwerpen bieden kansen voor verder onderzoek.

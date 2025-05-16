@@ -17,33 +17,31 @@
 
 In de digitale wereld is vertrouwen in beveiligingssystemen cruciaal, vooral binnen de financiële sector. Banken hebben complexe netwerken die moeten worden beschermd tegen cyberbedreigingen. Trust management, het beheren van vertrouwde relaties aan de hand van digitale certificaten en public key infrastructures (PKI's) speelt hierin een belangrijke rol.
 
-Daarbij is het effectief beheren van truststores, de verzameling van vertrouwde certificaten, essentieel om veilige gegevensuitwisseling en transacties te garanderen.
+Daarbij is het effectief beheren van truststores en de certificaten die erin worden vertrouwd, de verzameling van vertrouwde certificaten, essentieel om veilige gegevensuitwisseling en transacties te garanderen.
 
-In vele netwerken worden truststores verspreid beheerd, hun locatie is afhankelijk van de gebruikte applicatie of besturingssystemen. Dit leidt tot een gefragmenteerde aanpak, wat niet alleen inefficiënt is, maar ook de kans vergroot op verouderde certificaten en beveiligszwaktes.
+In vele netwerken worden truststores verspreid beheerd, hun locatie is afhankelijk van de gebruikte applicatie of besturingssystemen en de bedrijfsrollen. Dit leidt tot een gefragmenteerde aanpak, wat niet alleen inefficiënt is, maar ook de kans vergroot op verouderde certificaten en beveiligszwaktes.
 
-Door een centrale aanpak te ontwikkelen voor truststorebeheer wordt er gestreefd naar meer consistentie, eenvoud en veiligheid in het beheer van certificaten. Dit onderzoek richt zich op het formuleren van richtlijnen en oplossingen die specifiek van toepassing op de behoeftes van de financiële sector.
+Door een centrale aanpak te ontwikkelen voor trust management wordt er gestreefd naar meer consistentie, eenvoud en veiligheid in het beheer van certificaten. Dit onderzoek richt zich op het formuleren van richtlijnen en oplossingen die specifiek van toepassing op de behoeftes van de financiële sector.
 
 Om dit doel te bereiken, beantwoordt dit onderzoek de volgende deelvragen:
 
-1. Wat zijn de belangrijkste concepten en technologieën achter PKI en truststorebeheer?
+1. Wat zijn de belangrijkste concepten en technologieën achter PKI en trust managment?
 
-2. Wat zijn de verschillen tussen gedistribueerd en gecentraliseerd truststorebeheer, en welke voordelen biedt een gecentraliseerde aanpak?
+2. Welke tools en technieken worden momenteel gebruikt voor trust management, en wat zijn hun beperkingen?
 
-3. Welke tools en technieken worden momenteel gebruikt voor truststorebeheer, en wat zijn hun beperkingen?
+3. Welke specifieke uitdagingen en eisen gelden voor trust management in bankomgevingen?
 
-4. Welke specifieke uitdagingen en eisen gelden voor truststorebeheer in bankomgevingen?
+4. Welke componenten moeten worden opgenomen in een virtueel bankennetwerk om een realistisch beeld te creëren?
 
-5. Welke componenten moeten worden opgenomen in een virtueel bankennetwerk om een realistisch beeld te creëren?
+5. Hoe kan een gecentraliseerde oplossing voor trust management worden ontworpen en geïmplementeerd in een bankennetwerk?
 
-6. Hoe kan een gecentraliseerde oplossing voor truststorebeheer worden ontworpen en geïmplementeerd in een bankennetwerk?
+6. Hoe kan de veiligheid, efficiëntie en schaalbaarheid van de gecentraliseerde oplossing worden getest en geëvalueerd?
 
-7. Hoe kan de veiligheid, efficiëntie en schaalbaarheid van de gecentraliseerde oplossing worden getest en geëvalueerd?
+7. In hoeverre voldoet de gecentraliseerde oplossing aan de beveiligings- en compliance-eisen van een bankomgeving?
 
-8. In hoeverre voldoet de gecentraliseerde oplossing aan de beveiligings- en compliance-eisen van een bankomgeving?
+8. Wat zijn de praktische voordelen en beperkingen van een gecentraliseerde trust management oplossing?
 
-9. Wat zijn de praktische voordelen en beperkingen van een gecentraliseerde truststorebeheeroplossing in vergelijking met een gedistribueerde aanpak?
-
-10. Welke aanbevelingen kunnen worden gedaan voor banken die een centrale truststorebeheerstrategie willen implementeren?
+9. Welke aanbevelingen kunnen worden gedaan voor banken die een centrale trust management systeem willen implementeren?
 
 Door deze vragen te beantwoorden, streeft het onderzoek ernaar richtlijnen en oplossingen te formuleren die aansluiten bij de specifieke behoeften van de financiële sector.
 
@@ -62,7 +60,7 @@ Een PKI beveiligd data en bouwt vertrouwen via deze digitale certificaten, die u
 
 Naast PKI en digitale certificaten zijn truststores en keystores ook van belang bij trust management.
 
-\textcite{IBM_2023} definieert dat Trust stores en keystores cryptografische artefacten bevatten, met andere woorden certificaten en private keys. Deze artefacten worden dan gebruikt door protocollen zoals TLS. Een keystore bevat persoonlijke certificaten samen met de overeenkomstige private keys die gebruikt worden om de eigenaar van het certificaat te identificeren.
+\textcite{IBM_2023} definieert dat Truststores en keystores cryptografische artefacten bevatten, met andere woorden certificaten en private keys. Deze artefacten worden dan gebruikt door protocollen zoals TLS. Een keystore bevat persoonlijke certificaten samen met de overeenkomstige private keys die gebruikt worden om de eigenaar van het certificaat te identificeren.
 
 Voor een TLS verbinding stelt een persoonlijk certificaat de identiteit van een endpoint voor, beide de client en de server hebben dit certificaat om elkaar te identificeren.
 
@@ -70,17 +68,17 @@ Een truststore bevat dan weer signer certificates die door de andere endpoints v
 
 Deze signer certificate bevatten een public key die gebruikt wordt om een persoonlijk certificaat te valideren. Door het toevoegen van de signer certificate in de client zijn truststore, kan de client de server vertrouwen om een TLS verbinding te maken.
 
-Vele software en besturingssystemen komen dan ook vooraf geïnstalleerd met hun eigen trust stores.
+Vele software en besturingssystemen komen dan ook vooraf geïnstalleerd met hun eigen truststores.
 
-"Er zijn 4 grote organisaties die zulke trust stores beheren: 1. Microsoft root certificate program die gebruikt wordt voor Windows. 2. Apple root certificate program is gebruikt voor alle Mac apparaten. 3. De Mozilla root certificates program wordt gebruikt door Mozilla zelf en meeste Linux distributies. 4. Google root certificate program wordt gebruikt door Google chrome en andere Google applicaties." \autocite{Encrypt_Cons}
+"Er zijn 4 grote organisaties die zulke truststores beheren: 1. Microsoft root certificate program die gebruikt wordt voor Windows. 2. Apple root certificate program is gebruikt voor alle Mac apparaten. 3. De Mozilla root certificates program wordt gebruikt door Mozilla zelf en meeste Linux distributies. 4. Google root certificate program wordt gebruikt door Google chrome en andere Google applicaties." \autocite{Encrypt_Cons}
 
-Volgens \textcite{SSL_ins} is een van de uitdagingen voor het beheren van trust stores, dat in grote organisaties met heterogene netwerken vele trust stores gedecentraliseerd liggen waarbij er een nood is aan gecoördineerd management.
+Volgens \textcite{SSL_ins} is een van de uitdagingen voor het beheren van truststores, dat in grote organisaties met heterogene netwerken vele truststores gedecentraliseerd liggen waarbij er een nood is aan gecoördineerd management.
 
 Dit kan opgelost worden door een gecentraliseerd management systeem, dit maakt het makkelijker om veranderingen te coördineren.
 
 Andere bronnen raden zulke gecentraliseerde systemen sterk aan.
 
-"Organisaties moeten overwegen de default trust stores af te wijzen. Ze zouden een eigen corporate-level trust store moeten maken aan de hand van certificate white-listing om te bepalen welke certificaten hierin worden opgenomen." \autocite{Venafi}
+"Organisaties moeten overwegen de default truststores af te wijzen. Ze zouden een eigen corporate-level truststore moeten maken aan de hand van certificate white-listing om te bepalen welke certificaten hierin worden opgenomen." \autocite{Venafi}
 
 Bij het opstellen van deze centrale truststore binnen de financiële sector brengt dit ook enkele uitdagingen met zich mee. Er zijn namelijk beveiligingseisen voor de infrastructuur van banken waaraan moet worden voldaan.
 
@@ -105,15 +103,15 @@ Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur v
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Het onderzoek naar centrale truststorebeheer in een banknetwerk zal opgedeeld worden in drie fases: een literatuurstudie, praktijkstudie en uiteindelijke rapportage en oplevering.
+Het onderzoek naar centrale trust management in een banknetwerk zal opgedeeld worden in drie fases: een literatuurstudie, praktijkstudie en uiteindelijke rapportage en oplevering.
 
 In de eerste maand zal de eerste fase van het onderzoek uitgevoerd worden, de literatuurstudie.
 
-Het doel in deze fase is om een diepgaand begrip te krijgen over trust management, certificaatbeheer en de verschillende aanpakken bij truststorebeheer.
+Het doel in deze fase is om een diepgaand begrip te krijgen over trust management, certificaatbeheer en de verschillende aanpakken bij trust managment.
 
 In deze literatuurstudie zal er gekeken worden naar de bestaande theorieën, technologieën en andere tools die momenteel worden gebruikt in praktijk.
 
-Ook zal er gekeken worden naar de voordelen van gecentraliseerde truststorebeheer en de eisen binnen de financiële sector.
+Ook zal er gekeken worden naar de voordelen van gecentraliseerde trust management en de eisen binnen de financiële sector.
 
 Op het einde van de eerste fase zal er samen gezeten worden met de co-promotor om mogelijke oplossingen te bespreken die verder zullen worden uitgewerkt in de praktijkstudie.
 
@@ -121,7 +119,7 @@ De info die verkregen wordt in deze literatuurstudie zal de basis leggen voor de
 
 Deze fase zou starten in maart en loopt tot eind april met een duur van 8 weken. Deze praktijkstudie opgedeeld in 3 delen.
 
-het ontwerpen van een virtuele omgeving, de implementatie van het centraal truststorebeheer en de evaluatie van de oplossing.
+het ontwerpen van een virtuele omgeving, de implementatie van het centraal trust management systeem en de evaluatie van de oplossing.
 
 In de eerste stap zal er weer worden samengezeten met de co-promotor om te bepalen welke componenten van het banknetwerk gesimuleerd moeten worden in de virtuele testomgeving.
 
@@ -133,11 +131,11 @@ Deze virtuele omgeving zal worden opgezet binnen GNS3, een netwerkemulator die h
 
 Het doel is om een realistisch netwerk te creëren dat de complexiteit van een bankomgeving weerspiegelt.
 
-De tweede stap, de implementatie van centraal truststorebeheer, begint midden maart en duurt drie weken.
+De tweede stap, de implementatie van centraal trust management, begint midden maart en duurt drie weken.
 
-In deze fase wordt een gecentraliseerde oplossing voor truststorebeheer opgezet. Dit gebeurt door middel van de tools die gekozen werden samen met de co-promotor in de literatuurstudie in combinatie met zelfgeschreven scripts voor het certificaatbeheer.
+In deze fase wordt een gecentraliseerde oplossing voor trust management opgezet. Dit gebeurt door middel van de tools die gekozen werden samen met de co-promotor in de literatuurstudie in combinatie met zelfgeschreven scripts voor het certificaatbeheer.
 
-Het doel hier is dat bij het genereren of updaten van een nieuw root certificaat, de truststores op elk systeem in het netwerk consistent zijn. Ook zullen er veiligheidscontroles geïmplementeerd worden, zoals het monitoren voor ongeldige of verlopen certificaten.
+Het doel hier is dat bij het genereren of updaten van een nieuw root certificaat, de truststores op elk systeem in het netwerk consistent zijn met de truststores van de systemen met dezelfde bedrijfsrollen.
 
 Na de implementatie volgt de derde stap van de praktijkstudie, die bestaat uit de evaluatie en validatie van de oplossing.
 
@@ -149,9 +147,9 @@ Er worden testcases opgesteld om veelvoorkomende uitdagingen te simuleren, zoals
 
 Ook wordt de schaalbaarheid en efficiëntie van de oplossing getest.
 
-Bij de schaalbaarheid zal er gekeken worden naar hoe de oplossing omgaat met het veranderen of uitbreiden van het netwerk. Bij de efficiëntie zal er gekeken worden naar hoe snel aanpassingen van certificaten binnen de centrale truststore verspreid worden binnen het netwerk zonder het verstoren van andere diensten.
+Bij de schaalbaarheid zal er gekeken worden naar hoe de oplossing omgaat met het veranderen of uitbreiden van het netwerk en/of het aantal certificaten. Bij de efficiëntie zal er gekeken worden naar hoe snel aanpassingen van certificaten binnen de centrale truststore verspreid worden binnen het netwerk zonder het verstoren van andere diensten.
 
-Als laatste fase van dit onderzoek zal er een rapportage gemaakt worden. Dit zal gebeuren in het begin van mei met een tijdsduur van 4 weken. De rapportage zal de ontwerpkeuzes en oplossing beschrijven alsook de evaluatie en resultaten van deze oplossing.
+Als laatste fase van dit onderzoek zal er een rapportage gemaakt worden van de configuraties binnen de POC omgeving. Dit zal gebeuren in het begin van mei met een tijdsduur van 4 weken. De rapportage zal de ontwerpkeuzes en oplossing beschrijven alsook de evaluatie en resultaten van deze oplossing.
 
 Op basis van de bevindingen worden dan conclusies en aanbevelingen geformuleerd voor de implementatie van centraal truststorebeheer in banknetwerken. 
 
@@ -163,9 +161,9 @@ Op basis van de bevindingen worden dan conclusies en aanbevelingen geformuleerd 
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Dit onderzoek verwacht dat gecentraliseerd truststorebeheer verbeteringen oplevert in beveiliging, efficiëntie en schaalbaarheid voor een banknetwerk.
+Dit onderzoek verwacht dat gecentraliseerde trust management verbeteringen oplevert in beveiliging, efficiëntie en schaalbaarheid voor een banknetwerk.
 
-Door de certificaten op een centrale plaats te beheren, wordt het risico op verlopen of ongeldige certificaten verkleind, wat de volledige netwerkbeveiliging versterkt.
+Door de certificaten op een centrale plaats te beheren, wordt het risico op verlopen of ongeldige certificaten verkleind, wat de volledige netwerkbeveiliging versterkt. Ook kan er makkelijker worden aangepast welke apparaten welke certificaten vertrouwen, zo kunnen onnodige certificaten gemakkelijk worden verwijderd uit een truststore.
 
 Het gecentraliseerde beheer zal ook de efficiëntie verhogen door automatisering van certificaatdistributie, wat tijd bespaart en menselijke fouten vermindert.
 
@@ -173,4 +171,4 @@ Bovendien maakt de oplossing schaalbaarheid mogelijk, wat essentieel is voor de 
 
 Dit onderzoek zal praktische aanbevelingen bieden voor de implementatie van deze oplossing in bankomgevingen, waardoor banken hun certificaatbeheer kunnen optimaliseren en hun netwerkbeveiliging kunnen versterken.
 
-In conclusie verwacht dit onderzoek te bevestigen dat gecentraliseerd truststorebeheer niet alleen de veiligheid verbetert, maar ook bijdraagt aan een efficiënter en beter beheersbaar netwerk, met duidelijke voordelen voor de banksector. 
+In conclusie verwacht dit onderzoek te bevestigen dat gecentraliseerd trust management niet alleen de veiligheid verbetert, maar ook bijdraagt aan een efficiënter en beter beheersbaar netwerk, met duidelijke voordelen voor de banksector. 
