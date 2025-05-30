@@ -1,11 +1,13 @@
 \chapter{\IfLanguageName{dutch}{Proof-of-concept}{Proof-of-concept}}%
 \label{ch:proof-of-concept}
-\section{\IfLanguageName{dutch}{Virtuele omgeving}{Virtual environment}}%
-\label{sec:Virtuele_omgeving}
+\section{\IfLanguageName{dutch}{Gekozen infrastructuur}{Chosen infrastructure}}%
+\label{sec:Gekozen-infrastructuur}
 
 Voor het opzetten van een oplossing en deze te kunnen testen en evalueren, is er een virtuele omgeving opgezet.
 Deze virtuele omgeving is opgezet in GNS3, een netwerkemulator die het mogelijk maakt om netwerkapparatuur alsook virtuele machines te simuleren.
-Binnen deze virtuele omgeving zal er aan netwerksegmentatie gedaan worden, het netwerk zal opgedeelde worden in 3 segmenten: een Admin, DMZ en employee segment.
+Binnen deze virtuele omgeving zal er aan netwerksegmentatie gedaan worden, het netwerk zal opgedeelde worden in 3 segmenten: een Admin, DMZ en employee segment. \\
+
+Op basis van de ondervindingen uit de infrastructuurstudie werd er gekozen om de volgende besturingssystemen en software te gebruiken:  
 
 \begin{figure}
   \centering
@@ -41,27 +43,39 @@ Binnen deze virtuele omgeving zal er aan netwerksegmentatie gedaan worden, het n
 \subsection{\IfLanguageName{dutch}{CA}{CA}}
 \label{subsec:CA}
 
-De CA server draait een Almalinux 8.8 image en is een Certificate Authority (CA). Deze CA zal de rol van interne CA spelen met een root certificaat dat gemaakt is met OpenSSL en ondertekend door de CA zelf. Naast de self-signed certificate zal er ook een leaf certificate gemaakt worden voor de webserver binnen deze omgeving.
+De CA server draait een Almalinux 8.8 image en is een Certificate Authority (CA) die draait in het admin netwerksegment, deze CA zal de rol van interne CA spelen. 
+In de infrastructuurstudie werd geen informatie gevonden rond software voor het opzetten van CA, hierdoor werd er gekozen om OpenSSL wegens bestaande kennis van deze software. 
+Met OpenSSL werd een root certificaat getekend door de CA server zelf, naast de self-signed certificate werd er ook een leaf certificate gemaakt worden voor de webserver binnen deze omgeving.
 Deze server zal ook de Ansible control node zijn voor de eerste oplossing, voor de tweede gevonden oplossing zal deze de rol van de Chef infra server innemen.
 
 \subsection{\IfLanguageName{dutch}{Webserver}{Webserver}}
 \label{subsec:Webserver}
 
-De webserver draait op Ubuntu 22.04 en heeft een Nginx webserver draaien met een certificaat dat ondertekend werd door de eerder vermelde CA server.
-Het doel van deze webserver is om de functionaliteit van het aanpassen van de truststore te testen, als een end-point de webpagina kan bereiken zonder waarschuwing via het https protocol, dan betekent dat de server ``CA'' zijn root certificaat aanwezig is in de end-point zijn truststore. \\
+De webserver draait op Ubuntu 22.04 en heeft een Nginx webserver draaien met een certificaat dat ondertekend werd door de eerder vermelde CA server. Dit is ook de enigste server die in het DMZ netwerksegment staat.
+Het doel van deze webserver is om de functionaliteit van het aanpassen van de truststore te testen, als een end-point de webpagina kan bereiken zonder waarschuwing via het https protocol, dan betekent dat de server ``CA'' zijn root certificaat aanwezig is in de end-point zijn truststore.
+Daarnaast zal deze servero ok gebruikt worden om de functionaliteiten van een gevonden oplossing te testen binnen het DMZ netwerksegment. \\
 De server zal later ook de rol van Chef infra client spelen om te kunnen communiceren met de Chef infra server, daarnaast draait ook Hashicorp Vault Agent op deze server voor communicatie met de Vault server in de tweede oplossing.
 
 \subsection{\IfLanguageName{dutch}{Windows server}{Windows server}}
 \label{subsec:Windows_server}
 
-Deze server draait Windows Server 2022 en is de domein controller van de virtuele omgeving. Het domein is ``Bachelorproef.local'' en de server heeft een Active Directory (AD) opgezet. De Active Directory bevat 2 logins voor de Windows clients ``Employee-client'' en ``Admin-client''. Binnen de AD zal elke Windows client die het netwerk betreedt automatisch gestoken worden. 
+Deze server draait Windows Server 2022 en is de domein controller van de virtuele omgeving, gesitueerd in het admin netwerksegment. Het opgezette domein is ``Bachelorproef.local'' en de server heeft een Active Directory (AD). De Active Directory bevat 2 logins voor de Windows clients ``Employee-client'' en ``Admin-client''. Binnen de AD zal elke Windows client die het netwerk betreedt automatisch gestoken worden. 
 Deze clients worden manueel in de juiste organisational unit (OU) gestoken. In dit geval zijn dit de OU ``Employee'' en ``Admin''.
-De Windows server heeft ook SCCM (System Center Configuration Manager) draaien die later in het onderzoek voor de tweede oplossing gebruikt zal worden om de truststores van de Windows clients te beheren.
+De rol van DNS server is ook opgenomen in deze server. Ondanks dat de infrastructuurstudie aangaf dat er populairdere DNS servers zijn, werd er gekozen om de ingebouwde DNS server van Windows Server te gebruiken, zodanig alle domain services op een centraal punt beheerd kunnen worden.
+De Windows server heeft ook SCCM (System Center Configuration Manager) server draaien die later in het onderzoek voor de tweede oplossing gebruikt zal worden om de truststores van de Windows clients te beheren.
+
+\subsection{\IfLanguageName{dutch}{Database}{Database}}
+\label{subsec:Database}
+
+Deze server draait Almalinux 8.8 en ligt ook binnen het admin segment, ondanks de naam heeft deze server geen database draaien, het originele idee was om de PostrgeSQL database voor de Chef infra server op deze server te draaien, maar dit werd later aangepast naar de CA server.
+Aangezien deze server geen cruciale rollen heeft werd deze gebruikt als end-point waarop de functionaliteiten van de oplossingen binnen het Admin netwerksegment getest kunnen worden.
+Daarnaast zal deze server ook de rol van Chef workstation hebben om de Chef infra server en clients te kunnen beheren.
 
 \subsection{\IfLanguageName{dutch}{Vault}{Vault}}
 \label{subsec:Vault}
 
-De Vault server draait ook Ubuntu 22.04 en heeft een Hashicorp Vault server draaien. Deze Vault server zal gebruikt worden in de tweede oplossing om de root certificaten op een centrale plaats op te slaan.
+De Vault server draait ook Ubuntu 22.04 en heeft een Hashicorp Vault server draaien. Dit is ook de laatste server die in het admin netwerksegment staat.
+Deze Vault server zal gebruikt worden in de tweede oplossing om de root certificaten op een centrale plaats op te slaan.
 
 \subsection{\IfLanguageName{dutch}{Employee-client}{Employee-client}}
 \label{subsec:Employee-client}
@@ -111,7 +125,7 @@ Een belangrijke observatie tijdens het uitvoeren van dit onderzoek was dat zowel
 \section{\IfLanguageName{dutch}{Eerste oplossing}{First solution}}%
 \label{sec:Eerste_oplossing}
 
-\begin{figure}
+\begin{figure}[H]
   \centering
   \includegraphics[width=1\textwidth]{Architectuurplan_opl1.png}
   \caption[Architectuurplan van de eerste oplossing]{\label{fig:opl1} Het architectuurplan van de werking van de eerste oplossing.}
@@ -121,7 +135,7 @@ De initieel gevonden oplossing bestond uit het gebruik van Ansible voor de Linux
 
 \subsection{\IfLanguageName{dutch}{Oplossing door middel van GPO's met root certificaten}{Solution for Windows end-points using GPOs with root certificates}}
 \label{subsec:Oplossing_door_middel_van_GPOs_met_root_certificaten}
-Om Windows clients hun truststores centraal te kunnen beheren, kan er simpelweg een GPO (Group Policy Object) aangemaakt worden die root certificaten bevat en deze kan dan toegepast worden op een organizational unit (OU) binnen de Active Directory.
+Om Windows clients hun truststores centraal te kunnen beheren, kan er een GPO (Group Policy Object) aangemaakt worden die root certificaten bevat en deze kan dan toegepast worden op een organizational unit (OU) binnen de Active Directory.
 Er kan dus een GPO aangemaakt worden per OU (in dit geval de 3 OU's voor de 3 netwerksegmenten) die elk de juiste root certificaten bevatten. \\
 
 Voor deze proof of concept zal er een verzameling van root certificaten opgeslagen worden in een directory op de Windows server, deze directory zal 3 subdirectories bevatten, 1 voor elk netwerksegment. De root certificaten die in deze subdirectories staan zijn de root certificaten die de clients in dat netwerksegment moeten vertrouwen.
@@ -131,7 +145,7 @@ De GPO's kunnen als volgt aangemaakt worden:
 \begin{itemize}
     \item Open de Group Policy Management Console (GPMC) op de Windows server.
     \item Maak een nieuwe GPO aan door met de rechtermuisknop op de OU te klikken en ``Create a GPO in this domain, and Link it here'' te selecteren.
-    \item Geef de GPO een naam, bijvoorbeeld ``Employee-certificates''.
+    \item Geef de GPO een naam, bijvoorbeeld ``Employee certificates''.
     \item Klik met de rechtermuisknop op de GPO en selecteer ``Edit''.
     \item Ga naar Computer Configuration > Policies > Windows Settings > Security Settings > Public Key Policies > Trusted Root Certification Authorities.
     \item Klik met de rechtermuisknop en selecteer ``Import''.
@@ -140,12 +154,19 @@ De GPO's kunnen als volgt aangemaakt worden:
 \end{itemize}
 
 De GPO's kunnen dan toegepast worden, dit kan door met de rechtermuisknop op de OU te klikken en ``Link an Existing GPO'' te selecteren. Selecteer dan de GPO die je wilt toepassen op de OU. Daarna moet de policy nog enforced worden door met de rechtermuisknop op de GPO te klikken en ``Enforce'' te selecteren. Dit zorgt ervoor dat de GPO ook toegepast wordt op de OU en alle sub-OU's die binnen deze OU zitten. \\
+Voor de GPO ``Employee certificates'' zou dit er als volgt uitzien:
 
-Op de clients kan je dan de GPO's toepassen door het volgende commando uit te voeren in de command prompt:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{GPO.png}
+  \caption[De GPO ``Employee certificates'' in  het GPMC]{\label{fig:GPO} De GPO ``Employee certificates'' in  het GPMC.}
+\end{figure}
+
+
+Op de clients kan je dan de GPO's toepassen door een reboot of door het volgende commando uit te voeren in de command prompt:
 \begin{minted}{powershell}
     gpupdate /force
 \end{minted}
-Ook kan de GPO toegepast worden door de clients opnieuw op te starten. 
 
 \pagebreak
 
@@ -184,7 +205,6 @@ Met deze bestanden en directories kan er een Ansible playbook gemaakt worden dat
       {{ 'update-ca-certificates' if ansible_os_family == "Debian" else 'update-ca-trust extract' }}
 
   tasks:
-
     ### LEDIGEN DIRECTORIES ###
     - name: verwijderen van truststore directory
       file:
@@ -214,8 +234,6 @@ Met deze bestanden en directories kan er een Ansible playbook gemaakt worden dat
     ### TRUST STORE UPDATEN ###
     - name: Update systeem truststore
       command: "{{ update_command }}"
-
-
 \end{minted}
 \caption[Ansible playbook]{De Ansible playbook die certificaten van de Ansible control node naar de end-point truststore directory kopieert.}
 \end{listing}
@@ -229,12 +247,11 @@ Met deze bestanden en directories kan er een Ansible playbook gemaakt worden dat
 \end{minted}
 \caption[]{De Ansible playbook die certificaten van de Ansible control node naar de end-point truststore directory kopieert.}
 \end{listing}
-
-De playbook begint met het aanmaken van 3 variabelen, de eerste variabele ``cert\_source\_dir'' bevat de directory waar de root certificaten staan die de end-point moet vertrouwen, deze directory is afhankelijk van de groep waar de end-point in zit binnen de inventory file.
+Het playbook begint met het aanmaken van 3 variabelen, de eerste variabele genaamd ``cert\_source\_dir'' bevat de directory waar de root certificaten staan die de end-point moet vertrouwen, deze directory is afhankelijk van de groep waar de end-point in zit binnen de inventory file.
 Als tweede variabele ``dest\_cert\_dir'' wordt de directory bepaald waar de root certificaten naartoe gekopieerd worden, deze directory is afhankelijk van de linux distributie van de end-point.
 De laatste variabele ``update\_command'' bevat het commando dat gebruikt zal worden om de truststore te updaten, dit is ook afhankelijk van de linux distributie. \\
 
-Deze playbook zal hierna de truststore directory ledigen door het simpelweg te verwijderen, dit is opzich geen probleem want alle certificaten zijn momenteel nogsteeds aanwezig in de truststore bundle files van de applicaties.
+Deze playbook zal hierna de truststore directory ledigen door het te verwijderen, dit is opzich geen probleem want alle certificaten zijn momenteel nogsteeds aanwezig in de truststore bundle files van de applicaties.
 Vervolgens zal deze directory weer aangemaakt worden met de juiste permissies en hierna zullen de root certificaten uit de juiste bron directory gekopieerd worden naar de juiste doel directory.
 Als laatste zal de truststore geüpdatet worden met het correcte commando afhankelijk van de linux distributie. Hierbij zullen de root certificaten in de bundle files van de applicaties gestoken worden. \\
 
@@ -275,7 +292,7 @@ Waarbij ``inventory'' het inventory bestand is dat de IP adressen van de end-poi
 \section{\IfLanguageName{dutch}{Tweede oplossing}{Second solution}}%
 \label{sec:Tweede_oplossing}
 
-\begin{figure}
+\begin{figure}[H]
   \centering
   \includegraphics[width=1\textwidth]{Architectuurplan_opl2.png}
   \caption[Architectuurplan van de tweede oplossing]{\label{fig:opl2} Het architectuurplan van de werking van de tweede oplossing.}
@@ -300,6 +317,8 @@ In deze modus zal de vault server ook geen persistentie hebben, wat betekent dat
 %    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 %    sudo apt update && sudo apt install vault
 %\end{minted}
+
+\pagebreak
 
 De vault server wordt opgestart met de volgende commando:
 \begin{minted}{bash}
@@ -392,7 +411,9 @@ Daarna kan de voorgaande policy aangemaakt worden met het volgende commando:
 
 Waarbij ``public-certs.hcl'' het bestand is dat de policy bevat en ``certs-read'' de naam die gegeven wordt aan de policy. \\
 
-De role kan dan aangemaakt worden als volgt:
+\pagebreak
+
+De rol kan dan aangemaakt worden als volgt:
 \begin{minted}{bash}
     vault write auth/approle/role/chef_cert_reader \
     token_policies="certs-read" \
@@ -458,6 +479,8 @@ listener "tcp" {
 
 Waarbij ``role\_id\_file\_path'' het pad is naar het bestand dat de role\_id bevat en ``secret\_id\_file\_path'' het pad is naar het bestand dat de secret\_id bevat. 
 Sink ``file'' zorgt ervoor dat de token die aangemaakt wordt door de agent, opgeslagen wordt in het bestand ``/var/lib/vault/agent-token''. Dit bestand kan dan gebruikt worden door de end-point om toegang te krijgen tot de vault. \\
+
+\pagebreak
 
 Om de agent te starten kan er gebruik gemaakt worden van het volgende commando:
 \begin{minted}{bash}
@@ -633,7 +656,8 @@ Write-Log "script beeindigd voor netwerksegment $NetworkSegment"
 Dit script begint met het ophalen van de token voor de Vault server uit een bestand dat op de Windows server staat in de directory \\
 \backslash SYSVOL\textbackslash bachelorproef.local\textbackslash scripts\textbackslash archive\textbackslash token.txt.
 Dit bestand kan dan gebruikt worden door de end-point om toegang te krijgen tot de vault.
-Hierna zal de truststore leeggemaakt worden door alle certificaten te verwijderen. Het script haalt dan aan de hand van de parameter ``NetworkSegment'' de root certificaten op uit de vault en deze worden toegevoegd aan de truststore van de end-points.
+Hierna zal de truststore leeggemaakt worden door alle certificaten te verwijderen. Het script haalt dan aan de hand van de parameter ``NetworkSegment'' de root certificaten op uit de vault en deze worden toegevoegd aan de truststore van de end-points. \\
+
 Het script logt ook elke stap die uitgevoerd wordt in een log bestand dat opgeslagen wordt in de directory ``C:\textbackslash Temp\textbackslash Truststore\_Clear\_And\_Update\_Log.txt''. \\
 
 Een belangrijke opmerking bij dit script is dat de hele truststore leeggemaakt wordt, wat in een productieomgeving voor problemen kan zorgen. Dit kan mogelijks opgelost worden door het script idempotent te maken, dit betekent dat het script alleen de root certificaten toevoegt die niet in de truststore staan en alleen de certificaten verwijdert die niet meer in de manifest te vinden zijn. 
@@ -656,7 +680,16 @@ Kies hierna voor ``Standard program'' en geef het een naam zoals ``Run PS script
     _and_clear_truststore.ps1" -NetworkSegment "Admin"
 \end{minted}
 
-Zorg ervoor dat de ``Run with administrative rights'' optie is aangevinkt. Dit zorgt ervoor dat het script met administrator rechten uitgevoerd wordt, wat nodig is alleen om root certificaten te verwijderen uit de truststore. \\
+\pagebreak
+
+Zorg ervoor dat de ``Run with administrative rights'' optie is aangevinkt. Dit zorgt ervoor dat het script met administrator rechten uitgevoerd wordt, wat nodig is alleen om root certificaten te verwijderen uit de truststore.
+Na het aanmaken van de packages met program zou het er als volgt moeten uitzien: \\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{Packages.png}
+  \caption[Packages in het SCCM management console]{\label{fig:Packages} De packages voor de Admin en Employee clients in het SCCM management console.}
+\end{figure}
 
 Na het aanmaken van de package kan deze uitgerold worden naar de end-points door een nieuwe deployment aan te maken. Dit kan gedaan worden door de volgende stappen te volgen:
 \begin{itemize}
@@ -673,6 +706,14 @@ Na het aanmaken van de package kan deze uitgerold worden naar de end-points door
 \end{itemize}
 Hierna kan de deployment gefinaliseerd worden. 
 De bovenstaande stappen kunnen dan herhaald worden voor de andere netwerksegmenten. \\
+
+Na het deployen van de packages kan je controlleren of de distribution succesvol was door naar ``Administration'' te gaan en dan naar ``Distribution points'' en bij properties van de distribution point te kijken of de packages bij content te vinden zijn zoals in de volgende afbeelding:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{Distribution_point.png}
+  \caption[Distribution point content met packages]{\label{fig:DP} De deployed packages in de distribution point content.}
+\end{figure}
 
 End-points die binnen de groep van de deployment zaten kunnen de deployment controlleren door naar ``Software Center'' te gaan en daar naar de package te zoeken. De package zal vermelden wanneer het ingepland is om uitgevoerd te worden.
 
@@ -908,7 +949,7 @@ Met deze opstelling zouden de Linux end-points nu steeds up-to-date moeten zijn 
     \item Con's:
     \begin{itemize}
         \item De oplossing is afhankelijk van verschillende servers, wat voor meer points of failure zorgt.
-        \item Er zijn meer servers en software die onderhouding nodig hebben.
+        \item Er zijn meer servers en software die onderhoud nodig hebben.
     \end{itemize}
 \end{itemize}
 
